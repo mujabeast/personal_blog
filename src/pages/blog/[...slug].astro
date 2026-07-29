@@ -1,0 +1,30 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '@/layouts/PostLayout.astro';
+import { getPosts, relatedPosts } from '@/utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.id.replace(/\.(md|mdx)$/, '') },
+    props: {
+      post,
+      previous: posts[index + 1],
+      next: posts[index - 1],
+      related: relatedPosts(post, posts),
+      seriesPosts: post.data.series
+        ? posts
+            .filter((item) => item.data.series === post.data.series)
+            .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
+        : []
+    }
+  }));
+}
+
+const { post, previous, next, related, seriesPosts } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout {post} {headings} {previous} {next} {related} {seriesPosts}>
+  <Content />
+</PostLayout>

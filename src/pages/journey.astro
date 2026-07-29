@@ -1,0 +1,43 @@
+---
+import { getEntry, render } from 'astro:content';
+import PageLayout from '@/layouts/PageLayout.astro';
+import Timeline from '@/components/Timeline.astro';
+import CodeEnhancer from '@/components/CodeEnhancer.astro';
+const page = await getEntry('pages', 'journey');
+if (!page) throw new Error('Missing src/content/pages/journey.md');
+const { Content } = await render(page);
+---
+
+<PageLayout title={page.data.title} description={page.data.description} eyebrow="Journey / 2025–present">
+  <section class="journey-layout shell">
+    <aside>
+      <p class="mono">Selected chronology</p>
+      <Timeline />
+    </aside>
+    <div class="prose"><Content /></div>
+  </section>
+  <CodeEnhancer />
+</PageLayout>
+
+<style>
+  .journey-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.5fr);
+    gap: clamp(3rem, 7vw, 6rem);
+    padding-block: clamp(3rem, 7vw, 6rem);
+  }
+
+  aside {
+    align-self: start;
+  }
+
+  :global(.journey-layout .prose > *) {
+    margin-inline: 0;
+  }
+
+  @media (max-width: 900px) {
+    .journey-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

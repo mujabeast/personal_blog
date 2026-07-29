@@ -1,0 +1,316 @@
+---
+import type { Post } from '@/utils/posts';
+import BaseLayout from './BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import CodeEnhancer from '@/components/CodeEnhancer.astro';
+import { categoryLabels } from '@/config';
+import { formatDate, isoDate } from '@/utils/dates';
+import { readingTimeFor } from '@/utils/posts';
+import { path, absoluteUrl } from '@/utils/paths';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  previous?: Post;
+  next?: Post;
+  related?: Post[];
+  seriesPosts?: Post[];
+}
+const { post, headings, previous, next, related = [], seriesPosts = [] } = Astro.props;
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const canonical = post.data.canonicalUrl ?? absoluteUrl(Astro.url.pathname).toString();
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: isoDate(post.data.publishedDate),
+    dateModified: isoDate(post.data.updatedDate ?? post.data.publishedDate),
+    author: { '@type': 'Person', name: 'Mujahid Iskandar' },
+    mainEntityOfPage: canonical
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/').toString() },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: absoluteUrl('/blog/').toString() },
+      { '@type': 'ListItem', position: 3, name: post.data.title, item: canonical }
+    ]
+  }
+];
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.coverImage}
+  canonical={canonical}
+  type="article"
+  {jsonLd}
+>
+  <article>
+    <header class="article-head">
+      <div class="shell">
+        <ol class="crumbs" aria-label="Breadcrumb">
+          <li><a href={path('/')}>Home</a></li>
+          <li><a href={path('/blog/')}>Blog</a></li>
+          <li aria-current="page">{post.data.title}</li>
+        </ol>
+        <div class="article-meta mono">
+          <a href={path(`/categories/${post.data.category}/`)}>{categoryLabels[post.data.category]}</a>
+          <time datetime={isoDate(post.data.publishedDate)}>{formatDate(post.data.publishedDate)}</time>
+          <span>{readingTimeFor(post)}</span>
+          {post.data.draft && <span class="draft">Local draft preview</span>}
+        </div>
+        <h1>{post.data.title}</h1>
+        <p class="dek">{post.data.description}</p>
+        {post.data.updatedDate && <p class="updated mono">Updated {formatDate(post.data.updatedDate)}</p>}
+        <div class="article-tags">
+          {post.data.tags.map((tag) => <a class="tag" href={path(`/tags/${tag}/`)}>#{tag}</a>)}
+        </div>
+      </div>
+    </header>
+
+    <div class="article-grid shell">
+      <aside class="toc" aria-label="Table of contents">
+        <p class="mono">On this page</p>
+        {toc.length > 0 ? (
+          <ol>
+            {toc.map((heading) => (
+              <li class:list={{ nested: heading.depth === 3 }}><a href={`#${heading.slug}`}>{heading.text}</a></li>
+            ))}
+          </ol>
+        ) : <p>No subsections.</p>}
+      </aside>
+      <div class="prose article-body"><slot /></div>
+    </div>
+
+    <footer class="article-footer shell">
+      <section class="author">
+        <span class="author-mark" aria-hidden="true">MI</span>
+        <div>
+          <p class="mono">Written by</p>
+          <h2>Mujahid Iskandar</h2>
+          <p>A cybersecurity student documenting the work of becoming more technically capable—and the corrections along the way.</p>
+        </div>
+      </section>
+
+      {post.data.series && seriesPosts.length > 0 && (
+        <nav class="series-nav" aria-label={`${post.data.series} series`}>
+          <p class="mono">Series / {post.data.series}</p>
+          <ol>
+            {seriesPosts.map((item) => (
+              <li>
+                <a href={path(`/blog/${item.id}/`)} aria-current={item.id === post.id ? 'page' : undefined}>
+                  <span>{String(item.data.seriesOrder ?? 0).padStart(2, '0')}</span>{item.data.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
+      {(previous || next) && (
+        <nav class="post-nav" aria-label="Adjacent articles">
+          {previous ? <PostCard post={previous} index={0} /> : <div />}
+          {next ? <PostCard post={next} index={1} /> : <div />}
+        </nav>
+      )}
+
+      {related.length > 0 && (
+        <section>
+          <div class="section-heading"><h2>Related field notes</h2></div>
+          <ul class="post-list">
+            {related.map((item, index) => <PostCard post={item} {index} />)}
+          </ul>
+        </section>
+      )}
+      <a class="button" href={path('/blog/')}>← Back to the archive</a>
+    </footer>
+  </article>
+  <CodeEnhancer />
+</BaseLayout>
+
+<style>
+  .article-head {
+    padding: clamp(3rem, 8vw, 7rem) 0 3rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.2rem;
+    margin-top: 3.5rem;
+  }
+
+  .article-head h1 {
+    max-width: 18ch;
+    margin: 0.25em 0;
+    font-size: clamp(2.5rem, 7vw, 5.8rem);
+    letter-spacing: -0.06em;
+    line-height: 0.98;
+  }
+
+  .dek {
+    max-width: 760px;
+    color: var(--muted);
+    font-family: var(--serif);
+    font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  }
+
+  .updated {
+    font-size: 0.72rem;
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+  }
+
+  .draft {
+    padding: 0 0.35rem;
+    color: #10201f;
+    background: var(--signal);
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    padding-block: clamp(3rem, 7vw, 6rem);
+  }
+
+  .toc {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+  }
+
+  .toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc li {
+    margin: 0.55rem 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .toc li.nested {
+    padding-left: 0.8rem;
+  }
+
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--accent-dark);
+  }
+
+  .article-footer {
+    padding: 0 0 6rem;
+  }
+
+  .author {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 1.25rem;
+    max-width: var(--reading);
+    margin: 0 auto 5rem;
+    padding: 1.5rem 0;
+    border-block: 1px solid var(--line);
+  }
+
+  .author-mark {
+    display: grid;
+    width: 60px;
+    height: 60px;
+    color: #10201f;
+    background: var(--signal);
+    font-family: var(--mono);
+    place-items: center;
+  }
+
+  .author h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .author p {
+    max-width: 60ch;
+    margin: 0.2rem 0;
+    color: var(--muted);
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 5rem;
+  }
+
+  .series-nav {
+    max-width: var(--reading);
+    margin: 0 auto 5rem;
+    padding: 1.2rem;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+  }
+
+  .series-nav ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .series-nav a {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .series-nav a[aria-current="page"] {
+    color: var(--accent-dark);
+    font-weight: 700;
+  }
+
+  .series-nav a span {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+  }
+
+  @media (max-width: 900px) {
+    .article-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .toc {
+      position: static;
+      padding: 1rem;
+      border: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 650px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

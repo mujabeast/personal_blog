@@ -1,0 +1,84 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import Search from '@/components/Search.astro';
+import { getPosts } from '@/utils/posts';
+import { categoryLabels } from '@/config';
+import { path } from '@/utils/paths';
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+---
+
+<PageLayout
+  title="Writing archive"
+  description="Technical notes, honest retrospectives and project records. Search the complete archive or browse by the kind of work."
+  eyebrow="Blog / indexed"
+>
+  <section class="archive shell">
+    <nav class="category-strip" aria-label="Blog categories">
+      {Object.entries(categoryLabels).map(([key, label], index) => (
+        <a href={path(`/categories/${key}/`)}><span>{String(index + 1).padStart(2, '0')}</span>{label}</a>
+      ))}
+    </nav>
+    <Search {tags} />
+    <noscript><p class="noscript-note">Filters require JavaScript. All published posts remain visible below.</p></noscript>
+    <ul class="post-list" data-filter-list>
+      {posts.map((post, index) => <PostCard {post} {index} />)}
+    </ul>
+  </section>
+</PageLayout>
+
+<style>
+  .archive {
+    padding-block: 3rem 6rem;
+  }
+
+  .category-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin-bottom: 2rem;
+    border: 1px solid var(--line);
+  }
+
+  .category-strip a {
+    display: flex;
+    flex-direction: column;
+    min-height: 95px;
+    padding: 0.8rem;
+    border-right: 1px solid var(--line);
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .category-strip a:last-child {
+    border-right: 0;
+  }
+
+  .category-strip a:hover {
+    color: var(--accent-dark);
+    background: var(--paper-raised);
+  }
+
+  .category-strip span {
+    margin-bottom: auto;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+  }
+
+  .noscript-note {
+    padding: 1rem;
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 760px) {
+    .category-strip {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .category-strip a {
+      border-bottom: 1px solid var(--line);
+    }
+  }
+</style>

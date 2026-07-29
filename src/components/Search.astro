@@ -1,0 +1,165 @@
+---
+import { categories, categoryLabels } from '@/config';
+interface Props { tags: string[]; }
+const { tags } = Astro.props;
+---
+
+<form class="search-controls" data-search-form>
+  <div class="search-field">
+    <label for="post-search">Search the archive</label>
+    <input id="post-search" name="q" type="search" placeholder="Try “linux”, “CTF” or “OSINT”…" autocomplete="off" />
+  </div>
+  <div>
+    <label for="category-filter">Category</label>
+    <select id="category-filter" name="category">
+      <option value="">All categories</option>
+      {categories.map((category) => <option value={category}>{categoryLabels[category]}</option>)}
+    </select>
+  </div>
+  <div>
+    <label for="tag-filter">Tag</label>
+    <select id="tag-filter" name="tag">
+      <option value="">All tags</option>
+      {tags.map((tag) => <option value={tag}>#{tag}</option>)}
+    </select>
+  </div>
+  <div>
+    <label for="sort-order">Sort</label>
+    <select id="sort-order" name="sort">
+      <option value="newest">Newest first</option>
+      <option value="oldest">Oldest first</option>
+    </select>
+  </div>
+</form>
+<div class="results-bar mono" aria-live="polite">
+  <span data-result-count></span>
+  <button type="button" data-clear-filters>Clear filters</button>
+</div>
+<p class="empty-state" data-filter-empty hidden>No writing matches those filters. Try a broader term or clear the filters.</p>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-search-form]');
+  const list = document.querySelector<HTMLElement>('[data-filter-list]');
+  const count = document.querySelector<HTMLElement>('[data-result-count]');
+  const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
+  const clear = document.querySelector<HTMLButtonElement>('[data-clear-filters]');
+
+  function filterPosts() {
+    if (!form || !list) return;
+    const data = new FormData(form);
+    const query = String(data.get('q') ?? '').trim().toLowerCase();
+    const category = String(data.get('category') ?? '');
+    const tag = String(data.get('tag') ?? '');
+    const sort = String(data.get('sort') ?? 'newest');
+    const cards = [...list.querySelectorAll<HTMLElement>('[data-post-card]')];
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const searchable = `${card.dataset.title} ${card.dataset.description} ${card.dataset.tags}`;
+      const tags = (card.dataset.tags ?? '').split(',');
+      const show = (!query || searchable.includes(query))
+        && (!category || card.dataset.category === category)
+        && (!tag || tags.includes(tag));
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+
+    cards
+      .sort((a, b) => {
+        const difference = Date.parse(b.dataset.date ?? '') - Date.parse(a.dataset.date ?? '');
+        return sort === 'oldest' ? -difference : difference;
+      })
+      .forEach((card) => list.append(card));
+
+    if (count) count.textContent = `${visible} ${visible === 1 ? 'entry' : 'entries'} shown`;
+    if (empty) empty.hidden = visible !== 0;
+    const url = new URL(location.href);
+    ['q', 'category', 'tag', 'sort'].forEach((key) => {
+      const value = String(data.get(key) ?? '');
+      if (value && !(key === 'sort' && value === 'newest')) url.searchParams.set(key, value);
+      else url.searchParams.delete(key);
+    });
+    history.replaceState({}, '', url);
+  }
+
+  if (form) {
+    const params = new URLSearchParams(location.search);
+    ['q', 'category', 'tag', 'sort'].forEach((name) => {
+      const control = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+      const value = params.get(name);
+      if (control && value) control.value = value;
+    });
+    form.addEventListener('input', filterPosts);
+    form.addEventListener('change', filterPosts);
+    clear?.addEventListener('click', () => {
+      form.reset();
+      filterPosts();
+      form.querySelector<HTMLInputElement>('input')?.focus();
+    });
+    filterPosts();
+  }
+</script>
+
+<style>
+  .search-controls {
+    display: grid;
+    grid-template-columns: minmax(240px, 2fr) repeat(3, minmax(130px, 0.75fr));
+    gap: 1px;
+    padding: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+  }
+
+  .search-controls > div {
+    padding: 0.75rem;
+    background: var(--paper-raised);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  input,
+  select {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    color: var(--ink);
+    background: var(--paper);
+  }
+
+  .results-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+  }
+
+  .results-bar button {
+    padding: 0;
+    border: 0;
+    color: var(--accent-dark);
+    background: transparent;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 850px) {
+    .search-controls {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .search-controls {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

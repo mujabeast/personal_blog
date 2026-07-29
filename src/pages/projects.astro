@@ -1,0 +1,33 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import { projects } from '@/data/projects';
+---
+
+<PageLayout
+  title="Projects"
+  description="Selected work across OSINT, embedded systems, challenge design and cybersecurity education. Public summaries leave sensitive implementation details out."
+  eyebrow="Build log / selected"
+>
+  <section class="section shell">
+    <div class="project-key">
+      <p class="mono">Status key</p>
+      <p><span aria-hidden="true"></span> Active work may change. Completed means the described milestone ended—not that every possible improvement is finished.</p>
+    </div>
+    <ul class="project-list">{projects.map((project) => <ProjectCard {project} />)}</ul>
+  </section>
+</PageLayout>
+
+<style>
+  .project-key {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+  }
+  .project-key p { margin: 0; color: var(--muted); }
+  @media (max-width: 600px) { .project-key { grid-template-columns: 1fr; } }
+</style>

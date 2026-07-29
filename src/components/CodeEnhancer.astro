@@ -1,0 +1,37 @@
+<script>
+  document.querySelectorAll<HTMLElement>('.prose h2[id], .prose h3[id], .prose h4[id]').forEach((heading) => {
+    if (heading.querySelector('.heading-anchor')) return;
+    const anchor = document.createElement('a');
+    anchor.className = 'heading-anchor';
+    anchor.href = `#${heading.id}`;
+    anchor.setAttribute('aria-label', 'Link to this section');
+    anchor.textContent = '#';
+    heading.append(anchor);
+  });
+
+  document.querySelectorAll<HTMLElement>('.prose pre').forEach((pre) => {
+    if (pre.parentElement?.classList.contains('code-frame')) return;
+    const frame = document.createElement('div');
+    frame.className = 'code-frame';
+    const actions = document.createElement('div');
+    actions.className = 'code-actions';
+    const wrap = document.createElement('button');
+    wrap.type = 'button';
+    wrap.textContent = 'Wrap';
+    wrap.setAttribute('aria-label', 'Toggle code line wrapping');
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.textContent = 'Copy';
+    copy.setAttribute('aria-label', 'Copy code');
+    actions.append(wrap, copy);
+    pre.parentNode?.insertBefore(frame, pre);
+    frame.append(actions, pre);
+
+    wrap.addEventListener('click', () => frame.classList.toggle('nowrap'));
+    copy.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(pre.textContent ?? '');
+      copy.textContent = 'Copied';
+      setTimeout(() => { copy.textContent = 'Copy'; }, 1600);
+    });
+  });
+</script>

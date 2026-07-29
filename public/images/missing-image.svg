@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-labelledby="title">
+  <title id="title">Image unavailable</title>
+  <rect width="800" height="450" fill="#e5e7df"/>
+  <path d="M0 0l800 450M800 0L0 450" stroke="#9ba7a3"/>
+  <rect x="280" y="185" width="240" height="80" fill="#f2f0e9" stroke="#9ba7a3"/>
+  <text x="400" y="233" text-anchor="middle" font-family="monospace" font-size="20" fill="#5d6865">IMAGE UNAVAILABLE</text>
+</svg>

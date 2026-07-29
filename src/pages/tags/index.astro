@@ -1,0 +1,36 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import { getPosts } from '@/utils/posts';
+import { path } from '@/utils/paths';
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))]
+  .map((tag) => ({ tag, count: posts.filter((post) => post.data.tags.includes(tag)).length }))
+  .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+---
+
+<PageLayout title="Tag index" description="Every subject currently represented in the writing archive." eyebrow="Archive / tags">
+  <section class="section shell">
+    <div class="tag-cloud">
+      {tags.map(({ tag, count }) => <a href={path(`/tags/${tag}/`)}><span>#{tag}</span><small>{count}</small></a>)}
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .tag-cloud {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    border-top: 1px solid var(--line);
+  }
+  .tag-cloud a {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-family: var(--mono);
+    text-decoration: none;
+  }
+  small { color: var(--accent); }
+</style>

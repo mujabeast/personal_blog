@@ -1,0 +1,24 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getPosts } from '@/utils/posts';
+import { categories, categoryLabels } from '@/config';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return categories.map((category) => ({
+    params: { category },
+    props: { category, posts: posts.filter((post) => post.data.category === category) }
+  }));
+}
+const { category, posts } = Astro.props;
+const label = categoryLabels[category as keyof typeof categoryLabels];
+---
+
+<PageLayout title={label} description={`Writing filed under ${label.toLowerCase()}.`} eyebrow="Archive / category">
+  <section class="section shell">
+    {posts.length > 0
+      ? <ul class="post-list">{posts.map((post, index) => <PostCard {post} {index} />)}</ul>
+      : <div class="empty-state"><p>Nothing has been published in this category yet.</p></div>}
+  </section>
+</PageLayout>

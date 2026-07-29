@@ -1,0 +1,59 @@
+---
+import { timeline } from '@/data/timeline';
+interface Props { limit?: number; }
+const { limit = timeline.length } = Astro.props;
+---
+
+<ol class="timeline">
+  {timeline.slice(0, limit).map((item, index) => (
+    <li>
+      <span class="timeline-index mono">{String(index + 1).padStart(2, '0')}</span>
+      <time>{item.date}</time>
+      <p>{item.event}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-strong);
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 3.5rem 9rem minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .timeline-index {
+    color: var(--accent);
+  }
+
+  time {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  p {
+    max-width: 65ch;
+    margin: 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 650px) {
+    li {
+      grid-template-columns: 2rem 1fr;
+      gap: 0.35rem 0.75rem;
+    }
+
+    p {
+      grid-column: 2;
+    }
+  }
+</style>

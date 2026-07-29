@@ -1,0 +1,49 @@
+<button class="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+  <span class="light-icon" aria-hidden="true">☼</span>
+  <span class="dark-icon" aria-hidden="true">◐</span>
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+
+  function currentTheme() {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function updateLabel() {
+    button?.setAttribute('aria-label', `Switch to ${currentTheme() === 'dark' ? 'light' : 'dark'} mode`);
+  }
+
+  updateLabel();
+  button?.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    updateLabel();
+  });
+</script>
+
+<style>
+  .theme-toggle {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--line);
+    place-items: center;
+    background: transparent;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+  }
+
+  .dark-icon,
+  :global([data-theme="dark"]) .light-icon {
+    display: none;
+  }
+
+  :global([data-theme="dark"]) .dark-icon {
+    display: inline;
+  }
+</style>

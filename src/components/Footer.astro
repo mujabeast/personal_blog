@@ -1,0 +1,97 @@
+---
+import { path } from '@/utils/paths';
+import SocialLinks from './SocialLinks.astro';
+import { siteConfig } from '@/config';
+---
+
+<footer class="footer">
+  <div class="shell footer-grid">
+    <div>
+      <p class="footer-title">Documenting the work in progress.</p>
+      <p>Learning, building and teaching cybersecurity without pretending the learning is finished.</p>
+    </div>
+    <div>
+      <p class="mono">Explore</p>
+      <a href={path('/blog/')}>Writing archive</a>
+      <a href={path('/journey/')}>Cybersecurity journey</a>
+      <a href={path('/rss.xml')}>RSS feed</a>
+    </div>
+    <div>
+      <p class="mono">Elsewhere</p>
+      <SocialLinks />
+      {siteConfig.social.email && (
+        <p class="disclosure">
+          For responsible security disclosures, email
+          {' '}<a href={`mailto:${siteConfig.social.email}?subject=Responsible%20security%20disclosure`}>{siteConfig.social.email}</a>.
+          Please avoid including secrets or sensitive personal data in the first message.
+        </p>
+      )}
+      <p class="privacy-note">No analytics. No trackers. No cookies beyond your saved colour preference.</p>
+    </div>
+  </div>
+  <div class="shell footer-base">
+    <span>© {new Date().getFullYear()} Mujahid Iskandar</span>
+    <span>Built with Astro · Singapore</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 4.5rem 0 1.5rem;
+    background: var(--paper-raised);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(180px, 0.7fr));
+    gap: 3rem;
+  }
+
+  .footer-title {
+    max-width: 14ch;
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 3.25rem);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+  }
+
+  .footer-title + p,
+  .privacy-note,
+  .disclosure {
+    max-width: 42ch;
+    color: var(--muted);
+  }
+
+  .footer-grid > div > a {
+    display: block;
+    margin: 0.45rem 0;
+  }
+
+  .privacy-note,
+  .disclosure {
+    font-size: 0.8rem;
+  }
+
+  .footer-base {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+  }
+
+  @media (max-width: 760px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .footer-base {
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+  }
+</style>

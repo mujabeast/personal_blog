@@ -1,0 +1,34 @@
+---
+import { siteConfig } from '@/config';
+
+const links: { label: string; href: string }[] = [];
+if (siteConfig.social.github) links.push({ label: 'GitHub', href: siteConfig.social.github });
+if (siteConfig.social.linkedin) links.push({ label: 'LinkedIn', href: siteConfig.social.linkedin });
+if (siteConfig.social.email) links.push({ label: 'Email', href: `mailto:${siteConfig.social.email}` });
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+{links.length > 0 && (
+  <div class:list={['social-links', className]}>
+    {links.map((link) => (
+      <a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">
+        {link.label}<span aria-hidden="true">{link.href.startsWith('http') ? ' ↗' : ''}</span>
+      </a>
+    ))}
+  </div>
+)}
+
+<style>
+  .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.1rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+  }
+</style>

@@ -1,0 +1,106 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { siteConfig } from '@/config';
+import { absoluteUrl, path } from '@/utils/paths';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  type?: 'website' | 'article';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = siteConfig.description,
+  image = '/og-default.svg',
+  canonical,
+  type = 'website',
+  jsonLd
+} = Astro.props;
+const pageTitle = title ? `${title} — ${siteConfig.title}` : `${siteConfig.title} — Cybersecurity field notes`;
+const canonicalUrl = canonical ?? absoluteUrl(Astro.url.pathname).toString();
+const imageUrl = absoluteUrl(image).toString();
+const defaultJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: siteConfig.author,
+    url: import.meta.env.SITE,
+    affiliation: { '@type': 'CollegeOrUniversity', name: siteConfig.university },
+    description: siteConfig.subtitle
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteConfig.title,
+    url: import.meta.env.SITE,
+    description: siteConfig.description
+  }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#101514" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f0e9" media="(prefers-color-scheme: light)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href={path('/favicon.svg')} />
+    <link rel="alternate" type="application/rss+xml" title={`${siteConfig.title} RSS`} href={path('/rss.xml')} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:locale" content={siteConfig.locale} />
+    <meta property="og:site_name" content={siteConfig.title} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        const theme = saved === 'dark' || saved === 'light'
+          ? saved
+          : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd ?? defaultJsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header />
+    <main id="main-content"><slot /></main>
+    <Footer />
+    <script is:inline define:vars={{ missingImage: path('/images/missing-image.svg') }}>
+      document.querySelectorAll('img').forEach((image) => {
+        image.addEventListener('error', () => {
+          if (image.dataset.fallbackApplied) return;
+          image.dataset.fallbackApplied = 'true';
+          image.src = missingImage;
+          if (!image.alt) image.alt = 'Image unavailable';
+        });
+      });
+    </script>
+    <script>
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="http"]').forEach((link) => {
+        if (link.origin !== location.origin) {
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+        }
+      });
+    </script>
+  </body>
+</html>

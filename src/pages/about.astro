@@ -1,0 +1,94 @@
+---
+import { getEntry, render } from 'astro:content';
+import PageLayout from '@/layouts/PageLayout.astro';
+import SocialLinks from '@/components/SocialLinks.astro';
+import { path } from '@/utils/paths';
+const page = await getEntry('pages', 'about');
+if (!page) throw new Error('Missing src/content/pages/about.md');
+const { Content } = await render(page);
+---
+
+<PageLayout title={page.data.title} description={page.data.description} eyebrow="Profile / concise">
+  <section class="about-grid shell">
+    <div class="profile-index">
+      <div class="initials" aria-hidden="true">MI</div>
+      <dl>
+        <div><dt>Based</dt><dd>Singapore</dd></div>
+        <div><dt>Studying</dt><dd>Information Engineering & Media</dd></div>
+        <div><dt>University</dt><dd>Nanyang Technological University</dd></div>
+        <div><dt>Direction</dt><dd>Systems, security, teaching</dd></div>
+      </dl>
+      <SocialLinks />
+      <a class="button" href={path('/journey/')}>Read the long version →</a>
+    </div>
+    <div class="prose"><Content /></div>
+  </section>
+</PageLayout>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(250px, 0.65fr) minmax(0, 1.35fr);
+    gap: clamp(3rem, 8vw, 7rem);
+    padding-block: clamp(3rem, 7vw, 6rem);
+  }
+
+  .profile-index {
+    align-self: start;
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+  }
+
+  .initials {
+    display: grid;
+    aspect-ratio: 1;
+    color: #10201f;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.12) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(rgba(0,0,0,.12) 1px, transparent 1px) 0 0 / 28px 28px,
+      var(--signal);
+    font-family: var(--mono);
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 700;
+    place-items: center;
+  }
+
+  dl {
+    margin: 1rem 0 1.5rem;
+  }
+
+  dl div {
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  dt {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0.1rem 0 0;
+  }
+
+  .profile-index .button {
+    margin-top: 1.5rem;
+  }
+
+  :global(.about-grid .prose > *) {
+    margin-inline: 0;
+  }
+
+  @media (max-width: 800px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .initials {
+      aspect-ratio: 16 / 8;
+    }
+  }
+</style>

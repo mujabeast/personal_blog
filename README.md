@@ -137,7 +137,7 @@ After updating graph content:
 3. Confirm the branch label and destination.
 4. Run `npm run build` before publishing.
 
-The browser script only handles movement, topic expansion and reset. All graph content remains static, typed build output; there is no graph database or client-side content fetch.
+The browser script only handles movement, cursor-centred zoom, topic expansion, the larger graph view and reset. All graph content remains static, typed build output; there is no graph database or client-side content fetch.
 
 ### Draft behaviour
 

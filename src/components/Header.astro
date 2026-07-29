@@ -2,50 +2,27 @@
 import { navigation } from '@/data/navigation';
 import { path } from '@/utils/paths';
 import ThemeToggle from './ThemeToggle.astro';
-import SocialLinks from './SocialLinks.astro';
 import { siteConfig } from '@/config';
 
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '/');
 const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
-
-const navIcons: Record<string, string> = {
-  Home: '⌂',
-  Journey: '↗',
-  Blog: '≡',
-  Projects: '□',
-  Now: '—',
-  About: 'i'
-};
 ---
 
-<aside class="site-sidebar">
-  <div class="sidebar-inner">
-    <div class="profile">
-      <a class="profile-photo" href={path('/about/')} aria-label={`About ${siteConfig.title}`}>
-        <img src={path('/images/profile.jpg')} alt="" width="112" height="112" />
-      </a>
-      <a class="site-title" href={path('/')}>{siteConfig.title}</a>
-      <p>{siteConfig.subtitle}</p>
-    </div>
+<header class="site-header">
+  <div class="header-inner shell">
+    <a class="brand" href={path('/')} title={`${siteConfig.title} home`}>
+      <span class="brand-mark" aria-hidden="true">MYI</span>
+      <span>Notes</span>
+    </a>
 
     <nav class="desktop-nav" aria-label="Primary">
       {navigation.map((item) => (
-        <a href={path(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
-          <span aria-hidden="true">{navIcons[item.label]}</span>
-          {item.label}
-        </a>
+        <a href={path(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
       ))}
     </nav>
 
-    <div class="sidebar-bottom">
-      <ThemeToggle />
-      <SocialLinks />
-    </div>
-  </div>
-
-  <div class="mobile-bar">
-    <a class="mobile-brand" href={path('/')}>{siteConfig.title}</a>
-    <div class="mobile-actions">
+    <div class="header-actions">
+      <a class="search-link" href={path('/search/')}>Search</a>
       <ThemeToggle />
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-navigation">
         <span class="sr-only">Open menu</span>
@@ -55,22 +32,19 @@ const navIcons: Record<string, string> = {
   </div>
 
   <div class="mobile-panel" id="mobile-navigation" hidden>
-    <nav aria-label="Mobile">
+    <nav class="shell" aria-label="Mobile">
       {navigation.map((item) => (
-        <a href={path(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
-          <span aria-hidden="true">{navIcons[item.label]}</span>
-          {item.label}
-        </a>
+        <a href={path(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>
       ))}
+      <a href={path('/search/')}>Search</a>
     </nav>
-    <SocialLinks />
   </div>
-</aside>
+</header>
 
 <script>
-  const sidebar = document.querySelector<HTMLElement>('.site-sidebar');
-  const button = sidebar?.querySelector<HTMLButtonElement>('.menu-button');
-  const panel = sidebar?.querySelector<HTMLElement>('.mobile-panel');
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const button = header?.querySelector<HTMLButtonElement>('.menu-button');
+  const panel = header?.querySelector<HTMLElement>('.mobile-panel');
   const links = panel?.querySelectorAll<HTMLAnchorElement>('a');
   let previousFocus: HTMLElement | null = null;
 
@@ -115,118 +89,111 @@ const navIcons: Record<string, string> = {
 </script>
 
 <style>
-  .site-sidebar {
+  .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
-    height: 100vh;
-    border-right: 1px solid var(--line);
-    background: var(--sidebar);
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
   }
 
-  .sidebar-inner {
+  .header-inner {
     display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    padding: 2.75rem 1.5rem 1.5rem;
+    min-height: 64px;
+    gap: 1.5rem;
+    align-items: center;
   }
 
-  .profile {
-    padding: 0 1rem;
-  }
-
-  .profile-photo {
-    position: relative;
-    display: block;
-    overflow: hidden;
-    width: 104px;
-    height: 104px;
-    margin-bottom: 1.15rem;
-    border: 1px solid var(--line-strong);
-    background: var(--panel);
-  }
-
-  .profile-photo img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 450%;
-    max-width: none;
-    height: auto;
-    transform: translate(-38%, -34%);
-  }
-
-  .site-title {
-    display: block;
+  .brand {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
     color: var(--ink);
-    font-size: 1.45rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
     text-decoration: none;
   }
 
-  .profile p {
-    max-width: 18ch;
-    margin: 0.45rem 0 0;
-    color: var(--sidebar-muted);
-    font-size: 0.88rem;
-    font-style: italic;
-    line-height: 1.45;
+  .brand-mark {
+    display: grid;
+    width: 36px;
+    height: 32px;
+    border: 1px solid var(--line-strong);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    place-items: center;
   }
 
   .desktop-nav {
-    display: grid;
-    gap: 0.2rem;
-    margin-top: 2.5rem;
+    display: flex;
+    gap: 1.25rem;
+    margin-left: auto;
   }
 
-  .desktop-nav a,
-  .mobile-panel nav a {
-    display: grid;
-    grid-template-columns: 1.8rem 1fr;
-    gap: 0.85rem;
-    align-items: center;
-    min-height: 42px;
-    padding: 0.55rem 1rem;
-    color: var(--sidebar-muted);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
+  .desktop-nav a {
+    padding: 0.3rem 0;
+    border-bottom: 1px solid transparent;
+    color: var(--muted);
+    font-size: 0.84rem;
     text-decoration: none;
-    text-transform: uppercase;
   }
 
   .desktop-nav a:hover,
-  .desktop-nav a[aria-current="page"],
-  .mobile-panel nav a:hover,
-  .mobile-panel nav a[aria-current="page"] {
+  .desktop-nav a[aria-current="page"] {
+    border-bottom-color: var(--green);
     color: var(--ink);
-    background: var(--sidebar-active);
   }
 
-  .desktop-nav a > span,
-  .mobile-panel nav a > span {
-    color: var(--faint);
-    font-family: var(--mono);
-    font-size: 1rem;
-    text-align: center;
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
   }
 
-  .sidebar-bottom {
-    display: grid;
-    gap: 1rem;
-    margin-top: auto;
-    padding: 1.25rem 1rem 0;
-    border-top: 1px solid var(--line);
+  .search-link {
+    padding: 0.4rem 0.65rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    text-decoration: none;
   }
 
-  :global(.sidebar-bottom .social-links) {
-    gap: 0.45rem 0.85rem;
+  .search-link:hover {
+    color: var(--green);
   }
 
-  .mobile-bar,
-  .mobile-panel {
+  .menu-button {
     display: none;
+    min-height: 36px;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    background: transparent;
+    font-size: 0.78rem;
+  }
+
+  .mobile-panel {
+    position: fixed;
+    inset: 65px 0 0;
+    padding-top: 1rem;
+    background: var(--paper);
+  }
+
+  .mobile-panel nav {
+    display: grid;
+  }
+
+  .mobile-panel a {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 1rem;
+    text-decoration: none;
+  }
+
+  .mobile-panel a:hover,
+  .mobile-panel a[aria-current="page"] {
+    color: var(--green);
   }
 
   .sr-only {
@@ -242,78 +209,18 @@ const navIcons: Record<string, string> = {
     overflow: hidden;
   }
 
-  @media (max-width: 900px) {
-    .site-sidebar {
-      position: sticky;
-      height: 60px;
-      border-right: 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .sidebar-inner {
+  @media (max-width: 880px) {
+    .desktop-nav,
+    .search-link {
       display: none;
     }
 
-    .mobile-bar {
-      display: flex;
-      height: 60px;
-      padding: 0 1rem;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--sidebar);
-    }
-
-    .mobile-brand {
-      color: var(--ink);
-      font-size: 1rem;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .mobile-actions {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
+    .header-actions {
+      margin-left: auto;
     }
 
     .menu-button {
-      min-height: 36px;
-      padding: 0.35rem 0.65rem;
-      border: 1px solid var(--line);
-      color: var(--sidebar-muted);
-      background: transparent;
-      font-size: 0.78rem;
-    }
-
-    .menu-button:hover {
-      border-color: var(--line-strong);
-      color: var(--ink);
-    }
-
-    .mobile-panel {
-      position: fixed;
-      inset: 60px 0 0;
       display: block;
-      padding: 1.25rem 1rem;
-      background: var(--sidebar);
-    }
-
-    .mobile-panel[hidden] {
-      display: none;
-    }
-
-    .mobile-panel nav {
-      display: grid;
-      gap: 0.25rem;
-      max-width: 32rem;
-      margin: 0 auto 2rem;
-    }
-
-    :global(.mobile-panel .social-links) {
-      max-width: 30rem;
-      margin: 0 auto;
-      padding: 1rem;
-      border-top: 1px solid var(--line);
     }
   }
 </style>

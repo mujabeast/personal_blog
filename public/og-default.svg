@@ -2,15 +2,11 @@
   <title id="title">MYI — cybersecurity notes and projects</title>
   <desc id="desc">Cybersecurity notes, projects, and learning records.</desc>
   <rect width="1200" height="630" fill="#17181a"/>
-  <rect width="270" height="630" fill="#1e1f21"/>
-  <path d="M270 0V630" stroke="#303236"/>
-  <rect x="58" y="70" width="88" height="88" fill="#27282b" stroke="#45484d"/>
-  <text x="102" y="126" text-anchor="middle" font-family="monospace" font-size="25" font-weight="700" fill="#dedfe1">MYI</text>
-  <text x="58" y="205" font-family="system-ui, sans-serif" font-size="29" font-weight="600" fill="#dedfe1">Mujahid Y.I</text>
-  <text x="58" y="245" font-family="system-ui, sans-serif" font-size="18" fill="#999da3">Security notes and projects</text>
-  <rect x="330" y="104" width="800" height="420" rx="12" fill="#1d1e20" stroke="#303236"/>
-  <text x="380" y="198" font-family="system-ui, sans-serif" font-size="26" font-weight="600" fill="#9a9da2">ABOUT THIS SITE</text>
-  <text x="380" y="282" font-family="system-ui, sans-serif" font-size="48" font-weight="600" fill="#dedfe1">Security notes, project records,</text>
-  <text x="380" y="342" font-family="system-ui, sans-serif" font-size="48" font-weight="600" fill="#dedfe1">and things I am learning.</text>
-  <text x="380" y="427" font-family="system-ui, sans-serif" font-size="23" fill="#9a9da2">Systems / CTF development / IoT / hardware security</text>
+  <path d="M72 92H1128" stroke="#303236"/>
+  <path d="M72 538H1128" stroke="#303236"/>
+  <rect x="72" y="142" width="64" height="58" fill="none" stroke="#45484d"/>
+  <text x="104" y="179" text-anchor="middle" font-family="monospace" font-size="18" font-weight="700" fill="#82ad88">MYI</text>
+  <text x="72" y="300" font-family="system-ui, sans-serif" font-size="52" font-weight="600" fill="#dedfe1">Notes and project work</text>
+  <text x="72" y="365" font-family="system-ui, sans-serif" font-size="26" fill="#9a9da2">Security / systems / CTF development / IoT / hardware</text>
+  <text x="72" y="485" font-family="system-ui, sans-serif" font-size="22" fill="#82ad88">MUJAHID Y.I</text>
 </svg>

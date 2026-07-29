@@ -36,11 +36,8 @@ const { post } = Astro.props;
 
 <style>
   .post-card {
-    margin-bottom: 1rem;
-    padding: 1.45rem 1.6rem;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: var(--panel);
+    padding: 1.35rem 0;
+    border-top: 1px solid var(--line);
   }
 
   .post-meta {
@@ -88,9 +85,4 @@ const { post } = Astro.props;
     background: var(--signal);
   }
 
-  @media (max-width: 520px) {
-    .post-card {
-      padding: 1.15rem;
-    }
-  }
 </style>

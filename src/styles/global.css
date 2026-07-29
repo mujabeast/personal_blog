@@ -7,23 +7,23 @@
   --paper: #17181a;
   --paper-raised: #1d1e20;
   --panel: #1d1e20;
-  --sidebar: #1e1f21;
-  --sidebar-active: #27282b;
-  --sidebar-muted: #999da3;
   --ink: #dedfe1;
   --muted: #9a9da2;
   --faint: #777b80;
   --line: #303236;
   --line-strong: #45484d;
-  --accent: #a9c4d4;
-  --accent-dark: #c3d8e4;
-  --signal: #30383c;
+  --green: #82ad88;
+  --green-strong: #a6cbaa;
+  --green-soft: #202b23;
+  --accent: var(--green);
+  --accent-dark: var(--green-strong);
+  --signal: var(--green-soft);
   --code: #111214;
   --shadow: none;
   --sans: "Source Sans 3", "Segoe UI", Arial, sans-serif;
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --serif: "Source Sans 3", "Segoe UI", Arial, sans-serif;
-  --max: 1080px;
+  --max: 1120px;
   --reading: 720px;
 }
 
@@ -32,17 +32,17 @@
   --paper: #f7f7f7;
   --paper-raised: #ffffff;
   --panel: #ffffff;
-  --sidebar: #f0f0f0;
-  --sidebar-active: #e4e4e4;
-  --sidebar-muted: #666a70;
   --ink: #292b2f;
   --muted: #666a70;
   --faint: #858990;
   --line: #dedfe2;
   --line-strong: #c7c9cd;
-  --accent: #496c82;
-  --accent-dark: #31566d;
-  --signal: #e8ecee;
+  --green: #477b52;
+  --green-strong: #315f3c;
+  --green-soft: #e5eee7;
+  --accent: var(--green);
+  --accent-dark: var(--green-strong);
+  --signal: var(--green-soft);
   --code: #ededee;
 }
 
@@ -127,16 +127,6 @@ button {
 .narrow {
   width: min(calc(100% - 4rem), 860px);
   margin-inline: auto;
-}
-
-.site-frame {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  min-height: 100vh;
-}
-
-.site-column {
-  min-width: 0;
 }
 
 main {
@@ -241,7 +231,7 @@ main {
 .button.primary {
   border-color: var(--accent);
   color: var(--ink);
-  background: var(--sidebar-active);
+  background: var(--green-soft);
 }
 
 .button.primary:hover {
@@ -254,6 +244,7 @@ main {
 .project-list {
   margin: 0;
   padding: 0;
+  border-bottom: 1px solid var(--line);
   list-style: none;
 }
 
@@ -482,10 +473,6 @@ h3:hover .heading-anchor,
 @media (max-width: 900px) {
   html {
     scroll-padding-top: 5rem;
-  }
-
-  .site-frame {
-    grid-template-columns: 1fr;
   }
 
   .shell,

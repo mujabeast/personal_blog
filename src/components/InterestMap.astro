@@ -1,0 +1,211 @@
+---
+import { path } from '@/utils/paths';
+
+const interests = [
+  { label: 'Linux & systems', href: path('/tags/linux/') },
+  { label: 'Reverse engineering', href: path('/now/#learning') },
+  { label: 'Web & API security', href: path('/now/#learning') },
+  { label: 'CTF development', href: path('/tags/ctf/') },
+  { label: 'IoT & hardware', href: path('/projects/') },
+  { label: 'Technical education', href: path('/tags/teaching/') }
+] as const;
+---
+
+<section class="interest-map" aria-labelledby="interest-map-title">
+  <div class="map-heading">
+    <h2 id="interest-map-title">Current interests</h2>
+    <a href={path('/now/')}>View /now</a>
+  </div>
+
+  <svg class="map-canvas" viewBox="0 0 620 380" role="img" aria-labelledby="map-title map-description">
+    <title id="map-title">Current interests knowledge graph</title>
+    <desc id="map-description">
+      A map connecting systems, reverse engineering, web and API security, CTF development, IoT and hardware, and technical education.
+    </desc>
+
+    <g class="edges" aria-hidden="true">
+      <path class="edge edge-systems" d="M310 190 L145 90" />
+      <path class="edge edge-reverse" d="M310 190 L492 85" />
+      <path class="edge edge-web" d="M310 190 L500 275" />
+      <path class="edge edge-ctf" d="M310 190 L310 325" />
+      <path class="edge edge-hardware" d="M310 190 L120 275" />
+      <path class="edge edge-education" d="M310 190 L310 55" />
+      <path class="edge edge-systems edge-reverse" d="M210 90 L415 85" />
+      <path class="edge edge-hardware edge-ctf" d="M195 275 L250 325" />
+      <path class="edge edge-ctf edge-education" d="M340 308 Q410 195 355 72" />
+    </g>
+
+    <a class="node node-current" href={path('/now/')} aria-label="View all current interests">
+      <rect x="240" y="169" width="140" height="42" rx="4" />
+      <text x="310" y="195">Current interests</text>
+    </a>
+
+    <a class="node node-systems" href={interests[0].href}>
+      <rect x="80" y="70" width="130" height="40" rx="4" />
+      <text x="145" y="95">{interests[0].label}</text>
+    </a>
+
+    <a class="node node-reverse" href={interests[1].href}>
+      <rect x="415" y="65" width="155" height="40" rx="4" />
+      <text x="492.5" y="90">{interests[1].label}</text>
+    </a>
+
+    <a class="node node-web" href={interests[2].href}>
+      <rect x="430" y="255" width="140" height="40" rx="4" />
+      <text x="500" y="280">{interests[2].label}</text>
+    </a>
+
+    <a class="node node-ctf" href={interests[3].href}>
+      <rect x="240" y="305" width="140" height="40" rx="4" />
+      <text x="310" y="330">{interests[3].label}</text>
+    </a>
+
+    <a class="node node-hardware" href={interests[4].href}>
+      <rect x="45" y="255" width="150" height="40" rx="4" />
+      <text x="120" y="280">{interests[4].label}</text>
+    </a>
+
+    <a class="node node-education" href={interests[5].href}>
+      <rect x="240" y="35" width="140" height="40" rx="4" />
+      <text x="310" y="60">{interests[5].label}</text>
+    </a>
+  </svg>
+
+  <ul class="map-list">
+    {interests.map((interest) => <li><a href={interest.href}>{interest.label}</a></li>)}
+  </ul>
+</section>
+
+<style>
+  .interest-map {
+    min-width: 0;
+  }
+
+  .map-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .map-heading h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .map-heading > a {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .map-canvas {
+    width: 100%;
+    height: auto;
+    color: var(--ink);
+  }
+
+  .edge {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.25;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .node rect {
+    fill: var(--paper);
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .node text {
+    fill: var(--muted);
+    font-family: var(--sans);
+    font-size: 12px;
+    text-anchor: middle;
+  }
+
+  .node-current rect {
+    fill: var(--green-soft);
+    stroke: var(--green);
+  }
+
+  .node-current text {
+    fill: var(--ink);
+    font-weight: 600;
+  }
+
+  .node:hover rect,
+  .node:focus rect {
+    fill: var(--green-soft);
+    stroke: var(--green);
+  }
+
+  .node:hover text,
+  .node:focus text {
+    fill: var(--ink);
+  }
+
+  .node:focus {
+    outline: none;
+  }
+
+  .map-canvas:has(.node-systems:hover, .node-systems:focus) .edge-systems,
+  .map-canvas:has(.node-reverse:hover, .node-reverse:focus) .edge-reverse,
+  .map-canvas:has(.node-web:hover, .node-web:focus) .edge-web,
+  .map-canvas:has(.node-ctf:hover, .node-ctf:focus) .edge-ctf,
+  .map-canvas:has(.node-hardware:hover, .node-hardware:focus) .edge-hardware,
+  .map-canvas:has(.node-education:hover, .node-education:focus) .edge-education {
+    stroke: var(--green);
+    stroke-width: 2;
+  }
+
+  .map-list {
+    display: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .map-list a {
+    display: block;
+    padding: 0.65rem 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .map-list a:hover {
+    color: var(--green);
+  }
+
+  @media (max-width: 620px) {
+    .map-canvas {
+      display: none;
+    }
+
+    .map-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .map-list li:nth-child(even) {
+      padding-left: 1rem;
+      border-left: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 420px) {
+    .map-list {
+      grid-template-columns: 1fr;
+    }
+
+    .map-list li:nth-child(even) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

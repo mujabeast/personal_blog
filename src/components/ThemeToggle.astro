@@ -1,6 +1,11 @@
 <button class="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
-  <span class="light-icon" aria-hidden="true">Dark</span>
-  <span class="dark-icon" aria-hidden="true">Light</span>
+  <svg class="theme-icon light-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.3 15.7A8.5 8.5 0 0 1 8.3 3.7 8.5 8.5 0 1 0 20.3 15.7Z"></path>
+  </svg>
+  <svg class="theme-icon dark-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="3.5"></circle>
+    <path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"></path>
+  </svg>
 </button>
 
 <script>
@@ -12,7 +17,9 @@
 
   function updateLabel() {
     buttons.forEach((button) => {
-      button.setAttribute('aria-label', `Switch to ${currentTheme() === 'dark' ? 'light' : 'dark'} mode`);
+      const label = `Switch to ${currentTheme() === 'dark' ? 'light' : 'dark'} mode`;
+      button.setAttribute('aria-label', label);
+      button.setAttribute('title', label);
     });
   }
 
@@ -29,12 +36,14 @@
 
 <style>
   .theme-toggle {
-    min-height: 36px;
-    padding: 0.35rem 0.65rem;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    padding: 0;
     border: 1px solid var(--line);
     color: var(--muted);
     background: transparent;
-    font-size: 0.78rem;
+    place-items: center;
   }
 
   .theme-toggle:hover {
@@ -48,6 +57,16 @@
   }
 
   :global([data-theme="dark"]) .dark-icon {
-    display: inline;
+    display: block;
+  }
+
+  .theme-icon {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
   }
 </style>

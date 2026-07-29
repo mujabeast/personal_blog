@@ -15,6 +15,8 @@
   --green: #82ad88;
   --green-strong: #a6cbaa;
   --green-soft: #202b23;
+  --warning: #d39467;
+  --ethical: #b99ad0;
   --accent: var(--green);
   --accent-dark: var(--green-strong);
   --signal: var(--green-soft);
@@ -40,6 +42,8 @@
   --green: #477b52;
   --green-strong: #315f3c;
   --green-soft: #e5eee7;
+  --warning: #9a4e20;
+  --ethical: #75498e;
   --accent: var(--green);
   --accent-dark: var(--green-strong);
   --signal: var(--green-soft);
@@ -422,11 +426,11 @@ h3:hover .heading-anchor,
 
 .callout.warning,
 .callout.mistake {
-  border-left-color: #b65d22;
+  border-left-color: var(--warning);
 }
 
 .callout.ethical-boundary {
-  border-left-color: #8b56a7;
+  border-left-color: var(--ethical);
 }
 
 .callout-title {

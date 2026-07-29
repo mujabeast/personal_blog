@@ -128,7 +128,7 @@ const jsonLd = [
           </ul>
         </section>
       )}
-      <a class="button" href={path('/blog/')}>← Back to the archive</a>
+      <a class="button" href={path('/blog/')}>← Back to the blog</a>
     </footer>
   </article>
   <CodeEnhancer />
@@ -176,8 +176,9 @@ const jsonLd = [
 
   .draft {
     padding: 0 0.35rem;
-    color: #10201f;
-    background: var(--signal);
+    border: 1px solid var(--green);
+    color: var(--ink);
+    background: var(--green-soft);
   }
 
   .article-grid {

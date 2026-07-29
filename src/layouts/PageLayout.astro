@@ -2,12 +2,13 @@
 import BaseLayout from './BaseLayout.astro';
 interface Props { title: string; description: string; eyebrow?: string; }
 const { title, description, eyebrow = 'Index' } = Astro.props;
+const showEyebrow = eyebrow.trim().toLocaleLowerCase() !== title.trim().toLocaleLowerCase();
 ---
 
 <BaseLayout {title} {description}>
   <header class="page-head">
     <div class="shell">
-      <span class="eyebrow">{eyebrow}</span>
+      {showEyebrow && <span class="eyebrow">{eyebrow}</span>}
       <h1>{title}</h1>
       <p>{description}</p>
     </div>

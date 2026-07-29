@@ -19,7 +19,7 @@ I update this page manually. The latest update date is shown above.
 - A personal ESP32-S3 electronic badge direction
 - CTF challenges designed around clear learning outcomes
 
-## Leading
+## Community
 
 - Supporting beginner education and technical community programmes
 - Coordinating contributors while respecting privacy, governance and sponsor responsibilities

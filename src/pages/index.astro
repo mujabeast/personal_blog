@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SocialLinks from '@/components/SocialLinks.astro';
+import InterestMap from '@/components/InterestMap.astro';
 import { getPosts, readingTimeFor } from '@/utils/posts';
 import { postPath, path } from '@/utils/paths';
 import { formatDate, isoDate } from '@/utils/dates';
@@ -11,35 +12,39 @@ const latestPost = posts[0];
 
 <BaseLayout>
   <div class="shell home">
-    <section class="home-intro" aria-labelledby="home-title">
-      <div class="intro-label">
-        <span class="monogram" aria-hidden="true">MYI</span>
-        <span class="eyebrow">About</span>
-      </div>
+    <div class="home-opening">
+      <section class="home-intro" aria-labelledby="home-title">
+        <div class="intro-label">
+          <span class="monogram" aria-hidden="true">MYI</span>
+          <span class="eyebrow">About</span>
+        </div>
 
-      <h1 id="home-title">Mujahid Y.I</h1>
-      <p class="lead">
-        I’m an Information Engineering and Media student at NTU. My current work and study cover cybersecurity,
-        computer systems, CTF development, IoT, and hardware security.
-      </p>
-      <p>
-        I also contribute to technical education and community programmes through NTU Sentinels. This site contains
-        my technical notes and public project records.
-      </p>
+        <h1 id="home-title">Mujahid Y.I</h1>
+        <p>
+          I’m a Year 2 Information Engineering and Media student at NTU. My current work and study cover
+          cybersecurity, computer systems, CTF development, IoT, and hardware security.
+        </p>
+        <p>
+          I’m also a member of NTU Sentinels, where I contribute to technical education and community programmes.
+          This site contains my technical notes and public project records.
+        </p>
 
-      <div class="home-links">
-        <a href={path('/blog/')}>Read my notes</a>
-        <a href={path('/projects/')}>View my projects</a>
-        <a href={path('/about/')}>More about me</a>
-      </div>
-      <SocialLinks />
-    </section>
+        <div class="home-links">
+          <a href={path('/blog/')}>Read my notes</a>
+          <a href={path('/projects/')}>View my projects</a>
+          <a href={path('/about/')}>More about me</a>
+        </div>
+        <SocialLinks />
+      </section>
+
+      <InterestMap />
+    </div>
 
     {latestPost && (
       <section class="latest" aria-labelledby="latest-heading">
         <div class="latest-heading">
           <h2 id="latest-heading">Latest note</h2>
-          <a href={path('/blog/')}>Writing archive</a>
+          <a href={path('/blog/')}>Blog</a>
         </div>
         <article>
           <h3><a href={postPath(latestPost.id)}>{latestPost.data.title}</a></h3>
@@ -59,11 +64,16 @@ const latestPost = posts[0];
     max-width: 1120px;
   }
 
-  .home-intro {
+  .home-opening {
     display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(460px, 1.1fr);
+    gap: clamp(3rem, 7vw, 6rem);
     min-height: min(680px, calc(78svh - 64px));
-    max-width: 720px;
-    align-content: center;
+    align-items: center;
+  }
+
+  .home-intro {
+    max-width: 620px;
     padding-block: 4.5rem;
   }
 
@@ -97,12 +107,8 @@ const latestPost = posts[0];
   .home-intro > p {
     max-width: 63ch;
     margin: 0.65rem 0;
-    color: var(--muted);
-  }
-
-  .home-intro .lead {
     color: var(--ink);
-    font-size: 1.08rem;
+    font-size: 1.02rem;
     line-height: 1.65;
   }
 
@@ -184,12 +190,23 @@ const latestPost = posts[0];
     font-size: 0.78rem;
   }
 
-  @media (max-width: 620px) {
-    .home-intro {
+  @media (max-width: 920px) {
+    .home-opening {
+      grid-template-columns: 1fr;
+      gap: 0;
       min-height: auto;
-      padding-block: 4rem;
     }
 
+    .home-intro {
+      padding: 4rem 0 2.5rem;
+    }
+
+    :global(.home-opening .interest-map) {
+      padding-bottom: 3rem;
+    }
+  }
+
+  @media (max-width: 620px) {
     .home-intro h1 {
       font-size: 1.55rem;
     }

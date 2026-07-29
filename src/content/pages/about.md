@@ -1,9 +1,9 @@
 ---
 title: About
-description: A short introduction to Mujahid Iskandar, his current areas of study and why this site exists.
+description: A short introduction to Mujahid Y.I, his current areas of study and why this site exists.
 ---
 
-I am **Mujahid Iskandar**, an Information Engineering and Media student at Nanyang Technological University. I began learning cybersecurity seriously in June 2025 through Linux and beginner security platforms. Since then, I have explored web and API security, OSINT, practical pentesting, CTF development, computer systems, IoT and hardware security.
+I am **Mujahid Y.I**, an Information Engineering and Media student at Nanyang Technological University. I began learning cybersecurity seriously in June 2025 through Linux and beginner security platforms. Since then, I have explored web and API security, OSINT, practical pentesting, CTF development, computer systems, IoT and hardware security.
 
 I also help lead NTU Sentinels, where I work on technical education, community programmes and CTF development. This site documents what I learn, build and sometimes misunderstand along the way.
 

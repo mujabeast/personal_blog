@@ -11,7 +11,7 @@ const { Content } = await render(page);
 <PageLayout title={page.data.title} description={page.data.description} eyebrow="Profile / concise">
   <section class="about-grid shell">
     <div class="profile-index">
-      <div class="initials" aria-hidden="true">MI</div>
+      <div class="initials" aria-hidden="true">MYI</div>
       <dl>
         <div><dt>Based</dt><dd>Singapore</dd></div>
         <div><dt>Studying</dt><dd>Information Engineering & Media</dd></div>
@@ -44,10 +44,7 @@ const { Content } = await render(page);
     display: grid;
     aspect-ratio: 1;
     color: #10201f;
-    background:
-      linear-gradient(90deg, rgba(0,0,0,.12) 1px, transparent 1px) 0 0 / 28px 28px,
-      linear-gradient(rgba(0,0,0,.12) 1px, transparent 1px) 0 0 / 28px 28px,
-      var(--signal);
+    background: var(--signal);
     font-family: var(--mono);
     font-size: clamp(3rem, 10vw, 7rem);
     font-weight: 700;

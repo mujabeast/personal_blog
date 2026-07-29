@@ -22,7 +22,7 @@ const {
   type = 'website',
   jsonLd
 } = Astro.props;
-const pageTitle = title ? `${title} — ${siteConfig.title}` : `${siteConfig.title} — Cybersecurity field notes`;
+const pageTitle = title ? `${title} — ${siteConfig.title}` : `${siteConfig.title} — Security notes and projects`;
 const canonicalUrl = canonical ?? absoluteUrl(Astro.url.pathname).toString();
 const imageUrl = absoluteUrl(image).toString();
 const defaultJsonLd = [

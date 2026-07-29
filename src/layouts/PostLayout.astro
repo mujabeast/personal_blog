@@ -28,7 +28,7 @@ const jsonLd = [
     description: post.data.description,
     datePublished: isoDate(post.data.publishedDate),
     dateModified: isoDate(post.data.updatedDate ?? post.data.publishedDate),
-    author: { '@type': 'Person', name: 'Mujahid Iskandar' },
+    author: { '@type': 'Person', name: 'Mujahid Y.I' },
     mainEntityOfPage: canonical
   },
   {
@@ -90,11 +90,11 @@ const jsonLd = [
 
     <footer class="article-footer shell">
       <section class="author">
-        <span class="author-mark" aria-hidden="true">MI</span>
+        <span class="author-mark" aria-hidden="true">MYI</span>
         <div>
           <p class="mono">Written by</p>
-          <h2>Mujahid Iskandar</h2>
-          <p>A cybersecurity student documenting the work of becoming more technically capable—and the corrections along the way.</p>
+          <h2>Mujahid Y.I</h2>
+          <p>Information Engineering and Media student writing about cybersecurity, systems, projects, and technical education.</p>
         </div>
       </section>
 
@@ -122,7 +122,7 @@ const jsonLd = [
 
       {related.length > 0 && (
         <section>
-          <div class="section-heading"><h2>Related field notes</h2></div>
+          <div class="section-heading"><h2>Related writing</h2></div>
           <ul class="post-list">
             {related.map((item, index) => <PostCard post={item} {index} />)}
           </ul>
@@ -150,9 +150,9 @@ const jsonLd = [
   .article-head h1 {
     max-width: 18ch;
     margin: 0.25em 0;
-    font-size: clamp(2.5rem, 7vw, 5.8rem);
-    letter-spacing: -0.06em;
-    line-height: 0.98;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    letter-spacing: -0.045em;
+    line-height: 1.02;
   }
 
   .dek {

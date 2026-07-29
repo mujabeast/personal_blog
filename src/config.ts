@@ -1,10 +1,10 @@
 export const siteConfig = {
-  title: 'Mujahid Iskandar',
-  shortTitle: 'MI / FIELD NOTES',
-  subtitle: 'Cybersecurity student, builder and community leader',
+  title: 'Mujahid Y.I',
+  shortTitle: 'MYI / Notes',
+  subtitle: 'Cybersecurity notes, projects, and learning records',
   description:
-    'A cybersecurity student documenting the process of learning systems, building projects, teaching beginners and growing a university security community.',
-  author: 'Mujahid Iskandar',
+    'Notes and project records covering cybersecurity, computer systems, CTF development, IoT, hardware security, and technical education.',
+  author: 'Mujahid Y.I',
   university: 'Nanyang Technological University',
   course: 'Information Engineering and Media',
   locale: 'en_SG',

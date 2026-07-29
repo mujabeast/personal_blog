@@ -1,8 +1,8 @@
-# Mujahid Iskandar
+# Mujahid Y.I
 
 I am an Information Engineering and Media student at Nanyang Technological University exploring cybersecurity, computer systems, hardware security and CTF development.
 
-This is the content source for my personal website and GitBook. I document the process of becoming more technically capable: what I learn, the projects I build, the mistakes I correct, and my experience helping to grow NTU’s cybersecurity community.
+This is the content source for my website and GitBook. It contains technical notes, project records, CTF material, and writing about cybersecurity education and community work.
 
 ## Start here
 

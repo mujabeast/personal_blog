@@ -1,6 +1,6 @@
-# Mujahid Iskandar — cybersecurity field notes
+# MYI — cybersecurity notes and projects
 
-A static personal cybersecurity blog and portfolio for Mujahid Iskandar. The site positions its author as a student documenting the process of learning systems and security, building projects, teaching beginners and helping lead a university cybersecurity community.
+A static cybersecurity blog and project archive by Mujahid Y.I, covering systems and security study, CTF development, hardware work, technical education, and community projects.
 
 The public site is intentionally writing-first: no trackers, external font requests, database, authentication, CMS, backend or client framework.
 

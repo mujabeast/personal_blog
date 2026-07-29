@@ -4,6 +4,7 @@ description: A planned beginner’s map of ELF files, the loader, memory and the
 publishedDate: 2026-07-17
 category: learning
 tags: [linux, elf, reverse-engineering, binary-exploitation]
+graphTopics: [reverse-engineering]
 featured: false
 draft: true
 ---

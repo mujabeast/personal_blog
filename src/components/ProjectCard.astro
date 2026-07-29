@@ -2,9 +2,10 @@
 import type { Project } from '@/data/projects';
 interface Props { project: Project; }
 const { project } = Astro.props;
+const projectId = `project-${project.number.toLowerCase()}`;
 ---
 
-<li class="project-card">
+<li class="project-card" id={projectId}>
   <div class="project-top">
     <span class="mono">{project.number}</span>
     <span class:list={['status', project.status.toLowerCase().replace(' ', '-')]}>
@@ -29,6 +30,7 @@ const { project } = Astro.props;
     gap: 1.5rem;
     padding: 1.4rem 0;
     border-top: 1px solid var(--line);
+    scroll-margin-top: 5rem;
   }
 
   .project-top {

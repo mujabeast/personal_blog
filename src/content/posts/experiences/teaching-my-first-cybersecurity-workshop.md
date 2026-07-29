@@ -4,6 +4,7 @@ description: A planned reflection on preparing beginner-friendly OSINT material 
 publishedDate: 2026-07-21
 category: experiences
 tags: [teaching, osint, leadership]
+graphTopics: [technical-education]
 featured: false
 draft: true
 ---

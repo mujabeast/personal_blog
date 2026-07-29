@@ -4,6 +4,7 @@ description: A planned reflection on moving from web interfaces towards devices,
 publishedDate: 2026-07-18
 category: learning
 tags: [iot, hardware-security, firmware]
+graphTopics: [iot-hardware]
 featured: false
 draft: true
 ---

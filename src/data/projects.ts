@@ -1,3 +1,5 @@
+import type { InterestTopicId } from './interests';
+
 export type ProjectStatus = 'Active' | 'Completed' | 'Learning project' | 'Archived' | 'Private';
 
 export interface Project {
@@ -8,6 +10,7 @@ export interface Project {
   description: string;
   details: string[];
   tags: string[];
+  graphTopics?: InterestTopicId[];
   featured?: boolean;
 }
 
@@ -23,6 +26,7 @@ export const projects: Project[] = [
       'The public summary deliberately leaves out the complete solution.'
     ],
     tags: ['OSINT', 'CTF', 'challenge creation'],
+    graphTopics: ['ctf-development'],
     featured: true
   },
   {
@@ -36,6 +40,7 @@ export const projects: Project[] = [
       'A practical lesson in designing for safety, repeatability and hardware reliability.'
     ],
     tags: ['IoT', 'APIs', 'physical security'],
+    graphTopics: ['iot-hardware'],
     featured: true
   },
   {
@@ -49,6 +54,7 @@ export const projects: Project[] = [
       'The public description focuses only on the technical learning.'
     ],
     tags: ['ESP32-S3', 'embedded', 'PCB'],
+    graphTopics: ['iot-hardware'],
     featured: true
   },
   {
@@ -62,6 +68,7 @@ export const projects: Project[] = [
       'Internal participant, sponsor and university details remain private.'
     ],
     tags: ['teaching', 'leadership', 'community'],
+    graphTopics: ['technical-education'],
     featured: true
   }
 ];

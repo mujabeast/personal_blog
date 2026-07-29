@@ -4,6 +4,7 @@ description: A planned process-focused reflection on authorised testing, restrai
 publishedDate: 2026-07-15
 category: experiences
 tags: [bug-bounty, web-security, pentesting]
+graphTopics: [web-api-security]
 featured: false
 draft: true
 ---

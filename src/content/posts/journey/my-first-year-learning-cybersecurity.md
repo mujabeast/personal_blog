@@ -4,6 +4,7 @@ description: A planned first-year retrospective focused on changed habits rather
 publishedDate: 2026-07-16
 category: journey
 tags: [journey, linux, networking, ctf]
+graphTopics: [systems]
 featured: false
 draft: true
 ---

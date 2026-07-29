@@ -1,211 +1,675 @@
 ---
-import { path } from '@/utils/paths';
+import { getCollection } from 'astro:content';
+import { interestTopics, type InterestTopicId } from '@/data/interests';
+import { projects } from '@/data/projects';
+import { getPosts } from '@/utils/posts';
+import { path, postPath } from '@/utils/paths';
 
-const interests = [
-  { label: 'Linux & systems', href: path('/tags/linux/') },
-  { label: 'Reverse engineering', href: path('/now/#learning') },
-  { label: 'Web & API security', href: path('/now/#learning') },
-  { label: 'CTF development', href: path('/tags/ctf/') },
-  { label: 'IoT & hardware', href: path('/projects/') },
-  { label: 'Technical education', href: path('/tags/teaching/') }
-] as const;
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface GraphEntry {
+  id: string;
+  title: string;
+  shortTitle: string;
+  href: string;
+  type: 'Post' | 'Project' | 'Page';
+  graphTopics: InterestTopicId[];
+}
+
+const posts = await getPosts();
+const pages = await getCollection('pages', ({ data }) => data.graphTopics.length > 0);
+
+function shorten(title: string, limit = 24): string {
+  return title.length <= limit ? title : `${title.slice(0, limit - 1).trimEnd()}…`;
+}
+
+function safeId(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+const entries: GraphEntry[] = [
+  ...posts
+    .filter(({ data }) => data.graphTopics.length > 0)
+    .map((post) => ({
+      id: `post-${safeId(post.id)}`,
+      title: post.data.title,
+      shortTitle: shorten(post.data.title),
+      href: postPath(post.id),
+      type: 'Post' as const,
+      graphTopics: [...post.data.graphTopics]
+    })),
+  ...projects
+    .filter((project) => project.graphTopics?.length)
+    .map((project) => ({
+      id: `project-${project.number.toLowerCase()}`,
+      title: project.title,
+      shortTitle: shorten(project.title),
+      href: path(`/projects/#project-${project.number.toLowerCase()}`),
+      type: 'Project' as const,
+      graphTopics: [...(project.graphTopics ?? [])]
+    })),
+  ...pages.map((page) => ({
+    id: `page-${safeId(page.id)}`,
+    title: page.data.title,
+    shortTitle: shorten(page.data.title),
+    href: path(`/${page.id}/`),
+    type: 'Page' as const,
+    graphTopics: [...page.data.graphTopics]
+  }))
+];
+
+const canvas = { width: 760, height: 500, centre: { x: 380, y: 250 } };
+
+function topicPosition(index: number, count: number): Point {
+  const angle = -Math.PI * 5 / 6 + index * (Math.PI * 2 / count);
+  return {
+    x: canvas.centre.x + Math.cos(angle) * 225,
+    y: canvas.centre.y + Math.sin(angle) * 170
+  };
+}
+
+function leafPosition(topic: Point, index: number, count: number): Point {
+  const dx = topic.x - canvas.centre.x;
+  const dy = topic.y - canvas.centre.y;
+  const side = Math.abs(dx) > Math.abs(dy)
+    ? dx < 0 ? 'left' : 'right'
+    : dy < 0 ? 'top' : 'bottom';
+  const lane = Math.floor(index / 4);
+  const laneIndex = index % 4;
+  const laneCount = Math.min(4, count - lane * 4);
+  const offset = laneIndex - (laneCount - 1) / 2;
+
+  if (side === 'top' || side === 'bottom') {
+    return {
+      x: canvas.centre.x + offset * 150,
+      y: side === 'top' ? 34 + lane * 58 : canvas.height - 34 - lane * 58
+    };
+  }
+
+  return {
+    x: side === 'left' ? 78 + lane * 158 : canvas.width - 78 - lane * 158,
+    y: canvas.centre.y + offset * 92
+  };
+}
+
+const topics = interestTopics.map((topic, topicIndex) => {
+  const topicEntries = entries.filter((entry) => entry.graphTopics.includes(topic.id));
+  const position = topicPosition(topicIndex, interestTopics.length);
+  return {
+    ...topic,
+    position,
+    entries: topicEntries.map((entry, index) => ({
+      ...entry,
+      nodeId: `${topic.id}-${entry.id}`,
+      position: leafPosition(position, index, topicEntries.length)
+    }))
+  };
+});
 ---
 
-<section class="interest-map" aria-labelledby="interest-map-title">
+<section class="interest-map" data-interest-map aria-labelledby="interest-map-title">
   <div class="map-heading">
-    <h2 id="interest-map-title">Current interests</h2>
-    <a href={path('/now/')}>View /now</a>
+    <div>
+      <h2 id="interest-map-title">Current interests</h2>
+      <p>Drag nodes. Select a topic to show its branches.</p>
+    </div>
+    <div class="map-actions">
+      <button type="button" data-graph-reset>Reset</button>
+      <a href={path('/now/')}>View /now</a>
+    </div>
   </div>
 
-  <svg class="map-canvas" viewBox="0 0 620 380" role="img" aria-labelledby="map-title map-description">
-    <title id="map-title">Current interests knowledge graph</title>
-    <desc id="map-description">
-      A map connecting systems, reverse engineering, web and API security, CTF development, IoT and hardware, and technical education.
-    </desc>
+  <div class="graph-viewport">
+    <svg
+      class="map-canvas"
+      viewBox={`0 0 ${canvas.width} ${canvas.height}`}
+      role="img"
+      aria-labelledby="map-title map-description"
+      data-graph
+    >
+      <title id="map-title">Interactive current interests knowledge graph</title>
+      <desc id="map-description">
+        Six topics connect only to the central current interests node. Selecting a topic reveals linked posts, projects, or pages. Every node can be dragged.
+      </desc>
 
-    <g class="edges" aria-hidden="true">
-      <path class="edge edge-systems" d="M310 190 L145 90" />
-      <path class="edge edge-reverse" d="M310 190 L492 85" />
-      <path class="edge edge-web" d="M310 190 L500 275" />
-      <path class="edge edge-ctf" d="M310 190 L310 325" />
-      <path class="edge edge-hardware" d="M310 190 L120 275" />
-      <path class="edge edge-education" d="M310 190 L310 55" />
-      <path class="edge edge-systems edge-reverse" d="M210 90 L415 85" />
-      <path class="edge edge-hardware edge-ctf" d="M195 275 L250 325" />
-      <path class="edge edge-ctf edge-education" d="M340 308 Q410 195 355 72" />
-    </g>
+      <g class="edges" aria-hidden="true">
+        {topics.map((topic) => (
+          <line
+            class="edge topic-edge"
+            data-source="current"
+            data-target={`topic-${topic.id}`}
+            x1={canvas.centre.x}
+            y1={canvas.centre.y}
+            x2={topic.position.x}
+            y2={topic.position.y}
+          />
+        ))}
+        {topics.flatMap((topic) =>
+          topic.entries.map((entry) => (
+            <line
+              class="edge branch-edge is-hidden"
+              data-topic={topic.id}
+              data-source={`topic-${topic.id}`}
+              data-target={entry.nodeId}
+              x1={topic.position.x}
+              y1={topic.position.y}
+              x2={entry.position.x}
+              y2={entry.position.y}
+            />
+          ))
+        )}
+      </g>
 
-    <a class="node node-current" href={path('/now/')} aria-label="View all current interests">
-      <rect x="240" y="169" width="140" height="42" rx="4" />
-      <text x="310" y="195">Current interests</text>
-    </a>
+      <g
+        class="graph-node current-node"
+        data-node-id="current"
+        data-home-x={canvas.centre.x}
+        data-home-y={canvas.centre.y}
+        transform={`translate(${canvas.centre.x} ${canvas.centre.y})`}
+      >
+        <a href={path('/now/')} aria-label="Open the current interests page">
+          <rect x="-70" y="-22" width="140" height="44" rx="5" />
+          <text class="node-label" y="4">Current interests</text>
+        </a>
+      </g>
 
-    <a class="node node-systems" href={interests[0].href}>
-      <rect x="80" y="70" width="130" height="40" rx="4" />
-      <text x="145" y="95">{interests[0].label}</text>
-    </a>
+      {topics.map((topic) => (
+        <g
+          class="graph-node topic-node"
+          data-node-id={`topic-${topic.id}`}
+          data-topic-node={topic.id}
+          data-home-x={topic.position.x}
+          data-home-y={topic.position.y}
+          transform={`translate(${topic.position.x} ${topic.position.y})`}
+          role="button"
+          tabindex="0"
+          aria-expanded="false"
+          aria-label={`${topic.label}: ${topic.entries.length} ${topic.entries.length === 1 ? 'branch' : 'branches'}`}
+        >
+          <title>{`Select ${topic.label} to ${topic.entries.length ? 'show its branches' : 'focus the topic'}`}</title>
+          <rect x="-74" y="-25" width="148" height="50" rx="5" />
+          <text class="node-label" y="-2">{topic.label}</text>
+          <text class="node-meta" y="14">
+            {topic.entries.length} {topic.entries.length === 1 ? 'branch' : 'branches'}
+          </text>
+        </g>
+      ))}
 
-    <a class="node node-reverse" href={interests[1].href}>
-      <rect x="415" y="65" width="155" height="40" rx="4" />
-      <text x="492.5" y="90">{interests[1].label}</text>
-    </a>
+      {topics.flatMap((topic) =>
+        topic.entries.map((entry) => (
+          <g
+            class="graph-node content-node is-hidden"
+            data-node-id={entry.nodeId}
+            data-topic={topic.id}
+            data-home-x={entry.position.x}
+            data-home-y={entry.position.y}
+            transform={`translate(${entry.position.x} ${entry.position.y})`}
+            aria-hidden="true"
+          >
+            <a href={entry.href} tabindex="-1" aria-label={`Open ${entry.type.toLowerCase()}: ${entry.title}`}>
+              <title>{entry.title}</title>
+              <rect x="-72" y="-24" width="144" height="48" rx="5" />
+              <text class="node-label" y="-2">{entry.shortTitle}</text>
+              <text class="node-meta" y="14">{entry.type}</text>
+            </a>
+          </g>
+        ))
+      )}
+    </svg>
+  </div>
 
-    <a class="node node-web" href={interests[2].href}>
-      <rect x="430" y="255" width="140" height="40" rx="4" />
-      <text x="500" y="280">{interests[2].label}</text>
-    </a>
-
-    <a class="node node-ctf" href={interests[3].href}>
-      <rect x="240" y="305" width="140" height="40" rx="4" />
-      <text x="310" y="330">{interests[3].label}</text>
-    </a>
-
-    <a class="node node-hardware" href={interests[4].href}>
-      <rect x="45" y="255" width="150" height="40" rx="4" />
-      <text x="120" y="280">{interests[4].label}</text>
-    </a>
-
-    <a class="node node-education" href={interests[5].href}>
-      <rect x="240" y="35" width="140" height="40" rx="4" />
-      <text x="310" y="60">{interests[5].label}</text>
-    </a>
-  </svg>
-
-  <ul class="map-list">
-    {interests.map((interest) => <li><a href={interest.href}>{interest.label}</a></li>)}
-  </ul>
+  <noscript>
+    <p class="no-script">Enable JavaScript to move the graph and reveal content branches.</p>
+  </noscript>
 </section>
+
+<script>
+  interface GraphNode {
+    element: SVGGElement;
+    x: number;
+    y: number;
+    homeX: number;
+    homeY: number;
+    vx: number;
+    vy: number;
+    dragging: boolean;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-interest-map]').forEach((map) => {
+    const svg = map.querySelector<SVGSVGElement>('[data-graph]');
+    const resetButton = map.querySelector<HTMLButtonElement>('[data-graph-reset]');
+    if (!svg || !resetButton) return;
+    const graph = svg;
+
+    const width = graph.viewBox.baseVal.width;
+    const height = graph.viewBox.baseVal.height;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nodeElements = [...graph.querySelectorAll<SVGGElement>('[data-node-id]')];
+    const nodes = new Map<string, GraphNode>(
+      nodeElements.map((element) => {
+        const homeX = Number(element.dataset.homeX);
+        const homeY = Number(element.dataset.homeY);
+        return [
+          element.dataset.nodeId ?? '',
+          { element, x: homeX, y: homeY, homeX, homeY, vx: 0, vy: 0, dragging: false }
+        ];
+      })
+    );
+    const edges = [...graph.querySelectorAll<SVGLineElement>('.edge')];
+    let activeTopic = '';
+    let animationFrame = 0;
+    let energy = 0;
+    let draggedNode: GraphNode | undefined;
+    let pointerOffset = { x: 0, y: 0 };
+    let movedDuringPointer = false;
+    let suppressClick = false;
+
+    function visibleNodes(): GraphNode[] {
+      return [...nodes.values()].filter(({ element }) => !element.classList.contains('is-hidden'));
+    }
+
+    function updateNode(node: GraphNode): void {
+      node.element.setAttribute('transform', `translate(${node.x} ${node.y})`);
+    }
+
+    function updateEdges(): void {
+      edges.forEach((edge) => {
+        if (edge.classList.contains('is-hidden')) return;
+        const source = nodes.get(edge.dataset.source ?? '');
+        const target = nodes.get(edge.dataset.target ?? '');
+        if (!source || !target) return;
+        edge.setAttribute('x1', String(source.x));
+        edge.setAttribute('y1', String(source.y));
+        edge.setAttribute('x2', String(target.x));
+        edge.setAttribute('y2', String(target.y));
+      });
+    }
+
+    function graphPoint(event: PointerEvent): DOMPoint {
+      const matrix = graph.getScreenCTM();
+      if (!matrix) return new DOMPoint(event.clientX, event.clientY);
+      return new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+    }
+
+    function runPhysics(): void {
+      animationFrame = 0;
+      if (reducedMotion || energy < 0.015) return;
+      const visible = visibleNodes();
+      const forces = new Map(visible.map((node) => [node, { x: 0, y: 0 }]));
+
+      for (let firstIndex = 0; firstIndex < visible.length; firstIndex += 1) {
+        for (let secondIndex = firstIndex + 1; secondIndex < visible.length; secondIndex += 1) {
+          const first = visible[firstIndex]!;
+          const second = visible[secondIndex]!;
+          const dx = second.x - first.x || 0.01;
+          const dy = second.y - first.y || 0.01;
+          const distanceSquared = Math.max(dx * dx + dy * dy, 900);
+          const distance = Math.sqrt(distanceSquared);
+          const strength = 3300 / distanceSquared;
+          const forceX = (dx / distance) * strength;
+          const forceY = (dy / distance) * strength;
+          forces.get(first)!.x -= forceX;
+          forces.get(first)!.y -= forceY;
+          forces.get(second)!.x += forceX;
+          forces.get(second)!.y += forceY;
+        }
+      }
+
+      edges.forEach((edge) => {
+        if (edge.classList.contains('is-hidden')) return;
+        const source = nodes.get(edge.dataset.source ?? '');
+        const target = nodes.get(edge.dataset.target ?? '');
+        if (!source || !target || !forces.has(source) || !forces.has(target)) return;
+        const dx = target.x - source.x || 0.01;
+        const dy = target.y - source.y || 0.01;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const desired = edge.classList.contains('branch-edge') ? 135 : 205;
+        const strength = (distance - desired) * 0.0035;
+        const forceX = (dx / distance) * strength;
+        const forceY = (dy / distance) * strength;
+        forces.get(source)!.x += forceX;
+        forces.get(source)!.y += forceY;
+        forces.get(target)!.x -= forceX;
+        forces.get(target)!.y -= forceY;
+      });
+
+      visible.forEach((node) => {
+        if (node.dragging) return;
+        const force = forces.get(node)!;
+        force.x += (width / 2 - node.x) * 0.00035;
+        force.y += (height / 2 - node.y) * 0.00035;
+        node.vx = (node.vx + force.x * energy) * 0.88;
+        node.vy = (node.vy + force.y * energy) * 0.88;
+        node.x = Math.min(width - 78, Math.max(78, node.x + node.vx));
+        node.y = Math.min(height - 28, Math.max(28, node.y + node.vy));
+        updateNode(node);
+      });
+
+      updateEdges();
+      energy *= 0.972;
+      animationFrame = window.requestAnimationFrame(runPhysics);
+    }
+
+    function wakeGraph(amount = 0.75): void {
+      energy = Math.max(energy, amount);
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(runPhysics);
+    }
+
+    function setTopic(topicId: string): void {
+      const shouldOpen = activeTopic !== topicId;
+      activeTopic = shouldOpen ? topicId : '';
+
+      graph.querySelectorAll<SVGGElement>('[data-topic-node]').forEach((topicNode) => {
+        const open = topicNode.dataset.topicNode === activeTopic;
+        topicNode.setAttribute('aria-expanded', String(open));
+        topicNode.classList.toggle('is-active', open);
+      });
+
+      graph.querySelectorAll<SVGGElement>('.content-node').forEach((contentNode) => {
+        const open = contentNode.dataset.topic === activeTopic;
+        contentNode.classList.toggle('is-hidden', !open);
+        contentNode.setAttribute('aria-hidden', String(!open));
+        contentNode.querySelector('a')?.setAttribute('tabindex', open ? '0' : '-1');
+      });
+
+      graph.querySelectorAll<SVGLineElement>('.branch-edge').forEach((edge) => {
+        edge.classList.toggle('is-hidden', edge.dataset.topic !== activeTopic);
+      });
+
+      updateEdges();
+      wakeGraph(0.9);
+    }
+
+    nodeElements.forEach((element) => {
+      const node = nodes.get(element.dataset.nodeId ?? '');
+      if (!node) return;
+
+      element.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        const point = graphPoint(event);
+        draggedNode = node;
+        node.dragging = true;
+        pointerOffset = { x: node.x - point.x, y: node.y - point.y };
+        movedDuringPointer = false;
+        element.classList.add('is-dragging');
+        element.setPointerCapture(event.pointerId);
+        wakeGraph(0.9);
+      });
+
+      element.addEventListener('pointermove', (event) => {
+        if (draggedNode !== node) return;
+        const point = graphPoint(event);
+        const nextX = Math.min(width - 78, Math.max(78, point.x + pointerOffset.x));
+        const nextY = Math.min(height - 28, Math.max(28, point.y + pointerOffset.y));
+        if (Math.hypot(nextX - node.x, nextY - node.y) > 2) movedDuringPointer = true;
+        node.x = nextX;
+        node.y = nextY;
+        node.vx = 0;
+        node.vy = 0;
+        updateNode(node);
+        updateEdges();
+        if (movedDuringPointer) event.preventDefault();
+      });
+
+      const finishPointer = (event: PointerEvent) => {
+        if (draggedNode !== node) return;
+        suppressClick = movedDuringPointer;
+        node.dragging = false;
+        draggedNode = undefined;
+        element.classList.remove('is-dragging');
+        if (element.hasPointerCapture(event.pointerId)) element.releasePointerCapture(event.pointerId);
+        wakeGraph(0.65);
+      };
+
+      element.addEventListener('pointerup', finishPointer);
+      element.addEventListener('pointercancel', finishPointer);
+      element.addEventListener('click', (event) => {
+        if (suppressClick) {
+          event.preventDefault();
+          event.stopPropagation();
+          suppressClick = false;
+          return;
+        }
+        const topicId = element.dataset.topicNode;
+        if (topicId) {
+          event.preventDefault();
+          setTopic(topicId);
+        }
+      });
+
+      if (element.dataset.topicNode) {
+        element.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          event.preventDefault();
+          setTopic(element.dataset.topicNode ?? '');
+        });
+      }
+    });
+
+    resetButton.addEventListener('click', () => {
+      activeTopic = '';
+      nodes.forEach((node) => {
+        node.x = node.homeX;
+        node.y = node.homeY;
+        node.vx = 0;
+        node.vy = 0;
+        updateNode(node);
+      });
+      graph.querySelectorAll<SVGGElement>('[data-topic-node]').forEach((topicNode) => {
+        topicNode.setAttribute('aria-expanded', 'false');
+        topicNode.classList.remove('is-active');
+      });
+      graph.querySelectorAll<SVGGElement>('.content-node').forEach((contentNode) => {
+        contentNode.classList.add('is-hidden');
+        contentNode.setAttribute('aria-hidden', 'true');
+        contentNode.querySelector('a')?.setAttribute('tabindex', '-1');
+      });
+      graph.querySelectorAll<SVGLineElement>('.branch-edge').forEach((edge) => edge.classList.add('is-hidden'));
+      updateEdges();
+      wakeGraph(0.55);
+    });
+
+    updateEdges();
+    wakeGraph(0.45);
+  });
+</script>
 
 <style>
   .interest-map {
     min-width: 0;
+    margin-left: clamp(0.75rem, 2vw, 1.5rem);
+    border: 1px solid var(--line-strong);
+    background: var(--paper-raised);
   }
 
   .map-heading {
     display: flex;
-    align-items: baseline;
+    gap: 1rem;
+    align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    padding: 0.9rem 1rem 0.8rem;
+    border-bottom: 1px solid var(--line);
   }
 
   .map-heading h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
   }
 
-  .map-heading > a {
+  .map-heading p {
+    margin: 0.2rem 0 0;
     color: var(--muted);
-    font-size: 0.8rem;
+    font-size: 0.74rem;
+  }
+
+  .map-actions {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .map-actions button,
+  .map-actions a {
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.74rem;
+  }
+
+  .map-actions button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .map-actions button:hover,
+  .map-actions a:hover {
+    color: var(--green);
+  }
+
+  .graph-viewport {
+    overflow: hidden;
   }
 
   .map-canvas {
+    display: block;
     width: 100%;
     height: auto;
     color: var(--ink);
   }
 
   .edge {
-    fill: none;
     stroke: var(--line-strong);
-    stroke-width: 1.25;
+    stroke-width: 1.2;
     vector-effect: non-scaling-stroke;
   }
 
-  .node rect {
+  .branch-edge {
+    stroke: var(--green);
+    stroke-opacity: 0.72;
+  }
+
+  .is-hidden {
+    display: none;
+  }
+
+  .graph-node {
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .graph-node.is-dragging {
+    cursor: grabbing;
+  }
+
+  .graph-node rect {
     fill: var(--paper);
     stroke: var(--line-strong);
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
   }
 
-  .node text {
+  .graph-node text {
     fill: var(--muted);
     font-family: var(--sans);
-    font-size: 12px;
+    font-size: 11px;
     text-anchor: middle;
+    pointer-events: none;
+    user-select: none;
   }
 
-  .node-current rect {
+  .graph-node .node-meta {
+    fill: var(--muted);
+    font-family: var(--mono);
+    font-size: 8px;
+    text-transform: uppercase;
+  }
+
+  .current-node rect,
+  .topic-node.is-active rect {
     fill: var(--green-soft);
     stroke: var(--green);
   }
 
-  .node-current text {
+  .current-node .node-label,
+  .topic-node.is-active .node-label {
     fill: var(--ink);
     font-weight: 600;
   }
 
-  .node:hover rect,
-  .node:focus rect {
+  .topic-node:hover rect,
+  .topic-node:focus rect,
+  .content-node:hover rect,
+  .content-node:focus-within rect,
+  .current-node:hover rect,
+  .current-node:focus-within rect {
     fill: var(--green-soft);
     stroke: var(--green);
   }
 
-  .node:hover text,
-  .node:focus text {
+  .topic-node:hover .node-label,
+  .topic-node:focus .node-label,
+  .content-node:hover .node-label,
+  .content-node:focus-within .node-label {
     fill: var(--ink);
   }
 
-  .node:focus {
+  .topic-node:focus {
     outline: none;
   }
 
-  .map-canvas:has(.node-systems:hover, .node-systems:focus) .edge-systems,
-  .map-canvas:has(.node-reverse:hover, .node-reverse:focus) .edge-reverse,
-  .map-canvas:has(.node-web:hover, .node-web:focus) .edge-web,
-  .map-canvas:has(.node-ctf:hover, .node-ctf:focus) .edge-ctf,
-  .map-canvas:has(.node-hardware:hover, .node-hardware:focus) .edge-hardware,
-  .map-canvas:has(.node-education:hover, .node-education:focus) .edge-education {
-    stroke: var(--green);
+  .topic-node:focus rect,
+  .graph-node a:focus rect {
     stroke-width: 2;
   }
 
-  .map-list {
-    display: none;
-    margin: 0;
-    padding: 0;
-    border-bottom: 1px solid var(--line);
-    list-style: none;
+  .graph-node a:focus {
+    outline: none;
   }
 
-  .map-list a {
-    display: block;
-    padding: 0.65rem 0;
+  .no-script {
+    margin: 0;
+    padding: 0.75rem 1rem;
     border-top: 1px solid var(--line);
     color: var(--muted);
-    font-size: 0.9rem;
-    text-decoration: none;
+    font-size: 0.8rem;
   }
 
-  .map-list a:hover {
-    color: var(--green);
+  @media (max-width: 920px) {
+    .interest-map {
+      margin-left: 0;
+    }
   }
 
   @media (max-width: 620px) {
+    .graph-viewport {
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+    }
+
     .map-canvas {
-      display: none;
+      width: 680px;
+      max-width: none;
     }
 
-    .map-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .map-heading {
+      align-items: flex-end;
     }
 
-    .map-list li:nth-child(even) {
-      padding-left: 1rem;
-      border-left: 1px solid var(--line);
+    .map-heading p {
+      max-width: 22ch;
     }
   }
 
-  @media (max-width: 420px) {
-    .map-list {
-      grid-template-columns: 1fr;
-    }
-
-    .map-list li:nth-child(even) {
-      padding-left: 0;
-      border-left: 0;
+  @media (prefers-reduced-motion: reduce) {
+    .map-heading p {
+      display: none;
     }
   }
 </style>

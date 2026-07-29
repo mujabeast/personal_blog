@@ -10,9 +10,8 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
 
 <header class="site-header">
   <div class="header-inner shell">
-    <a class="brand" href={path('/')} title={`${siteConfig.title} home`}>
+    <a class="brand" href={path('/')} aria-label={`${siteConfig.title} home`} title={`${siteConfig.title} home`}>
       <span class="brand-mark" aria-hidden="true">MYI</span>
-      <span>Notes</span>
     </a>
 
     <nav class="desktop-nav" aria-label="Primary">
@@ -105,12 +104,7 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
   }
 
   .brand {
-    display: flex;
-    gap: 0.7rem;
-    align-items: center;
-    color: var(--ink);
-    font-size: 0.9rem;
-    font-weight: 600;
+    display: block;
     text-decoration: none;
   }
 

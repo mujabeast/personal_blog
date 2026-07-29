@@ -11,6 +11,8 @@ tags:
   - challenge-creation
   - teaching
   - leadership
+graphTopics:
+  - systems
 featured: true
 draft: false
 ---

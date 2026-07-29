@@ -4,6 +4,7 @@ description: A planned account of the design questions that appeared while build
 publishedDate: 2026-07-20
 category: projects
 tags: [ctf, challenge-creation, osint]
+graphTopics: [ctf-development]
 featured: false
 draft: true
 ---

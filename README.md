@@ -45,7 +45,7 @@ npm test          # check, then build
 public/                       Static icons and social preview assets
 src/components/               Reusable Astro UI components
 src/content/                  Markdown source shared by Astro and GitBook
-src/data/                     Editable focus, project, timeline and navigation data
+src/data/                     Editable interests, projects, timeline and navigation data
 src/layouts/                  Base, page and article layouts
 src/pages/                    Static routes, archives, RSS and search index
 src/styles/global.css         Design tokens, typography and responsive system
@@ -70,6 +70,8 @@ category: learning
 tags:
   - linux
   - reverse-engineering
+graphTopics:
+  - systems
 featured: false
 draft: true
 series: Linux internals # optional
@@ -88,6 +90,54 @@ Supported categories are:
 - `experiences`
 
 Tags should be lowercase URL-safe slugs, such as `web-security` or `challenge-creation`. Dynamic category and tag pages are generated during the build. Reading time is derived automatically from the Markdown body.
+
+### Maintaining the homepage interest graph
+
+The homepage graph is generated at build time. Do not edit SVG nodes or links by hand.
+
+To add a blog post to a topic, add one or more `graphTopics` values to its frontmatter:
+
+```yaml
+graphTopics:
+  - iot-hardware
+```
+
+When the post has `draft: false`, the next production build creates a branch from **IoT & hardware** to that post. Draft branches appear during local development but are excluded from the live site.
+
+To add a project branch, set `graphTopics` on its entry in `src/data/projects.ts`:
+
+```ts
+{
+  number: 'P-05',
+  title: 'Example IoT project',
+  // ...
+  graphTopics: ['iot-hardware']
+}
+```
+
+Projects link to their numbered anchor on `/projects/`. A project is public data, so only add a graph topic when its existing project summary is safe to publish.
+
+Content pages in `src/content/pages/` also accept `graphTopics`, but the page must already have a matching route under `src/pages/`. A page called `research.md`, for example, needs a working `/research/` route before it should be added to the graph.
+
+Available graph topic IDs are:
+
+- `systems`
+- `reverse-engineering`
+- `web-api-security`
+- `ctf-development`
+- `iot-hardware`
+- `technical-education`
+
+The labels and IDs for these topics live in `src/data/interests.ts`. Add a new item there if the graph needs a new top-level topic; its initial radial position is calculated automatically. An entry may use multiple IDs, but use that sparingly because it will appear as a branch under every selected topic.
+
+After updating graph content:
+
+1. Run `npm run check` to validate every topic ID.
+2. Run `npm run dev` and select the affected topic on the homepage.
+3. Confirm the branch label and destination.
+4. Run `npm run build` before publishing.
+
+The browser script only handles movement, topic expansion and reset. All graph content remains static, typed build output; there is no graph database or client-side content fetch.
 
 ### Draft behaviour
 

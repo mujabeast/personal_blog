@@ -3,9 +3,13 @@ title: About
 description: A short introduction to Mujahid Y.I, his current areas of study and why this site exists.
 ---
 
-I am **Mujahid Y.I**, an Information Engineering and Media student at Nanyang Technological University. I began learning cybersecurity seriously in June 2025 through Linux and beginner security platforms. Since then, I have explored web and API security, OSINT, practical pentesting, CTF development, computer systems, IoT and hardware security.
+Hi! I’m Mujahid, a Year 2 Information Engineering and Media student at NTU.
 
-I am also a member of NTU Sentinels, where I contribute to technical education, community programmes and CTF development. This site contains notes from that work and from my own study.
+I’m quite passionate about anything cybersecurity-related, and I currently spend most of my time learning topics like web security, reverse engineering and, more recently, IoT and hardware security. The OSCP grind comes and goes depending on my workload, but uhh, it’s coming!
+
+I’m also part of NTU Sentinels, my school’s cybersecurity club. I help plan stuff, teach stuff, and get to meet a lot of cool people along the way (defcon sg!!) I also create fun CTF challenges :D
+
+This website is where I share my cybersec journey, my notes, projects and things I learn along the way ~
 
 ## Why I write
 

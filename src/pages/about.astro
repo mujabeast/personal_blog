@@ -11,7 +11,17 @@ const { Content } = await render(page);
 <PageLayout title={page.data.title} description={page.data.description} eyebrow="About">
   <section class="about-grid shell">
     <div class="profile-index">
-      <div class="about-monogram" aria-hidden="true">MYI</div>
+      <figure class="event-photo">
+        <img
+          src={path('/images/cybersecurity-event.jpg')}
+          alt="Mujahid at a cybersecurity event"
+          width="960"
+          height="1280"
+          loading="eager"
+          decoding="async"
+        />
+        <figcaption>CYSAT Asia</figcaption>
+      </figure>
       <dl>
         <div><dt>Based</dt><dd>Singapore</dd></div>
         <div><dt>Studying</dt><dd>Information Engineering & Media</dd></div>
@@ -41,16 +51,22 @@ const { Content } = await render(page);
     background: var(--paper-raised);
   }
 
-  .about-monogram {
-    display: grid;
-    width: 64px;
-    height: 64px;
+  .event-photo {
+    margin: 0;
+  }
+
+  .event-photo img {
+    width: 100%;
+    height: auto;
     border: 1px solid var(--line);
-    color: var(--green);
+  }
+
+  .event-photo figcaption {
+    margin-top: 0.45rem;
+    color: var(--muted);
     font-family: var(--mono);
-    font-size: 0.78rem;
-    font-weight: 700;
-    place-items: center;
+    font-size: 0.65rem;
+    text-transform: uppercase;
   }
 
   dl {

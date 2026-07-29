@@ -185,7 +185,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
       >
         <a href={path('/now/')} aria-label="Open the current interests page">
           <rect x="-95" y="-24" width="190" height="48" rx="5" />
-          <text class="node-label" y="5">My Current Interests!</text>
+          <text class="node-label" y="5">Interests</text>
         </a>
       </g>
 
@@ -283,6 +283,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
     let energy = 0;
     let draggedNode: GraphNode | undefined;
     let pointerOffset = { x: 0, y: 0 };
+    let pointerStart = { x: 0, y: 0 };
     let movedDuringPointer = false;
     let suppressClick = false;
     let expanded = false;
@@ -417,18 +418,22 @@ const topics = interestTopics.map((topic, topicIndex) => {
         draggedNode = node;
         node.dragging = true;
         pointerOffset = { x: node.x - point.x, y: node.y - point.y };
+        pointerStart = { x: point.x, y: point.y };
         movedDuringPointer = false;
         element.classList.add('is-dragging');
-        element.setPointerCapture(event.pointerId);
         wakeGraph(0.9);
       });
 
       element.addEventListener('pointermove', (event) => {
         if (draggedNode !== node) return;
         const point = graphPoint(event);
+        if (!movedDuringPointer && Math.hypot(point.x - pointerStart.x, point.y - pointerStart.y) <= 3) return;
         const nextX = point.x + pointerOffset.x;
         const nextY = point.y + pointerOffset.y;
-        if (Math.hypot(nextX - node.x, nextY - node.y) > 2) movedDuringPointer = true;
+        if (!movedDuringPointer) {
+          movedDuringPointer = true;
+          if (!element.hasPointerCapture(event.pointerId)) element.setPointerCapture(event.pointerId);
+        }
         node.x = nextX;
         node.y = nextY;
         node.vx = 0;
@@ -441,6 +446,11 @@ const topics = interestTopics.map((topic, topicIndex) => {
       const finishPointer = (event: PointerEvent) => {
         if (draggedNode !== node) return;
         suppressClick = movedDuringPointer;
+        if (suppressClick) {
+          window.setTimeout(() => {
+            suppressClick = false;
+          }, 0);
+        }
         node.dragging = false;
         draggedNode = undefined;
         element.classList.remove('is-dragging');
@@ -714,18 +724,21 @@ const topics = interestTopics.map((topic, topicIndex) => {
   }
 
   .graph-node text {
-    fill: var(--muted);
+    fill: var(--ink);
     font-family: var(--sans);
     font-size: 15px;
+    font-weight: 600;
     text-anchor: middle;
     pointer-events: none;
     user-select: none;
   }
 
   .graph-node .node-meta {
-    fill: var(--muted);
+    fill: var(--ink);
     font-family: var(--mono);
     font-size: 10px;
+    font-weight: 400;
+    opacity: 0.72;
     text-transform: uppercase;
   }
 

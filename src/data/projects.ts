@@ -4,6 +4,7 @@ export type ProjectStatus = 'Active' | 'Completed' | 'Learning project' | 'Archi
 
 export interface Project {
   number: string;
+  slug: string;
   title: string;
   status: ProjectStatus;
   period: string;
@@ -17,6 +18,7 @@ export interface Project {
 export const projects: Project[] = [
   {
     number: 'P-01',
+    slug: 'ntu-rewind',
     title: 'NTU Rewind',
     status: 'Completed',
     period: 'March–April 2026',
@@ -31,6 +33,7 @@ export const projects: Project[] = [
   },
   {
     number: 'P-02',
+    slug: 'iot-physical-security-challenge',
     title: 'IoT & physical security challenge development',
     status: 'Active',
     period: '2026',
@@ -45,6 +48,7 @@ export const projects: Project[] = [
   },
   {
     number: 'P-03',
+    slug: 'personal-electronic-badge',
     title: 'Personal electronic badge',
     status: 'Learning project',
     period: 'In development',
@@ -59,6 +63,7 @@ export const projects: Project[] = [
   },
   {
     number: 'P-04',
+    slug: 'cybersecurity-community-programmes',
     title: 'Cybersecurity community programmes',
     status: 'Active',
     period: '2025–present',

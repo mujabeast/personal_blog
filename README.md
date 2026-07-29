@@ -109,13 +109,16 @@ To add a project branch, set `graphTopics` on its entry in `src/data/projects.ts
 ```ts
 {
   number: 'P-05',
+  slug: 'example-iot-project',
   title: 'Example IoT project',
   // ...
   graphTopics: ['iot-hardware']
 }
 ```
 
-Projects link to their numbered anchor on `/projects/`. A project is public data, so only add a graph topic when its existing project summary is safe to publish.
+Each project receives a page at `/projects/<slug>/`, and its graph branch links to that page automatically. Keep every `slug` lowercase and URL-safe. A project is public data, so only add a graph topic when its existing project summary is safe to publish.
+
+Long-form project content lives in `src/content/projects/<slug>.md`. Keep the `project` frontmatter value aligned with the matching slug, then add ordinary Markdown below the frontmatter. Until that file has body content, the detail page displays the summary and public notes from `src/data/projects.ts`.
 
 Content pages in `src/content/pages/` also accept `graphTopics`, but the page must already have a matching route under `src/pages/`. A page called `research.md`, for example, needs a working `/research/` route before it should be added to the graph.
 
@@ -167,6 +170,7 @@ When adding or publishing an article, update `src/content/SUMMARY.md` if it shou
 
 - Homepage current focus: `src/data/focus.ts`
 - Projects and status labels: `src/data/projects.ts`
+- Long-form project pages: `src/content/projects/`
 - Homepage/journey timeline: `src/data/timeline.ts`
 - Main navigation: `src/data/navigation.ts`
 - `/now` content and `lastUpdated`: `src/content/pages/now.md`

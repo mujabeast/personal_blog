@@ -273,7 +273,7 @@ main {
   text-decoration: none;
 }
 
-.tag:hover {
+a.tag:hover {
   border-color: var(--accent);
   color: var(--accent-dark);
 }

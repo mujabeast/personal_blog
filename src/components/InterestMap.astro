@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import { interestTopics, type InterestTopicId } from '@/data/interests';
 import { projects } from '@/data/projects';
 import { getPosts } from '@/utils/posts';
-import { path, postPath } from '@/utils/paths';
+import { path, postPath, projectPath } from '@/utils/paths';
 
 interface Point {
   x: number;
@@ -47,7 +47,7 @@ const entries: GraphEntry[] = [
       id: `project-${project.number.toLowerCase()}`,
       title: project.title,
       shortTitle: shorten(project.title),
-      href: path(`/projects/#project-${project.number.toLowerCase()}`),
+      href: projectPath(project.slug),
       type: 'Project' as const,
       graphTopics: [...(project.graphTopics ?? [])]
     })),
@@ -113,13 +113,9 @@ const topics = interestTopics.map((topic, topicIndex) => {
 <div class="graph-backdrop" data-graph-backdrop hidden></div>
 <section class="interest-map" data-interest-map aria-labelledby="interest-map-title">
   <div class="map-heading">
-    <div>
-      <h2 id="interest-map-title">Current interests</h2>
-      <p>Drag nodes. Scroll to zoom. Select a topic to show its branches.</p>
-    </div>
+    <h2 id="interest-map-title">My Current Interests!</h2>
     <div class="map-actions">
       <button type="button" data-graph-reset>Reset</button>
-      <a href={path('/now/')}>View /now</a>
       <button
         class="expand-button"
         type="button"
@@ -136,6 +132,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
         </svg>
       </button>
     </div>
+    <p>Drag nodes · scroll to zoom · select topics for branches.</p>
   </div>
 
   <div class="graph-viewport">
@@ -187,8 +184,8 @@ const topics = interestTopics.map((topic, topicIndex) => {
         transform={`translate(${canvas.centre.x} ${canvas.centre.y})`}
       >
         <a href={path('/now/')} aria-label="Open the current interests page">
-          <rect x="-80" y="-24" width="160" height="48" rx="5" />
-          <text class="node-label" y="4">Current interests</text>
+          <rect x="-95" y="-24" width="190" height="48" rx="5" />
+          <text class="node-label" y="5">My Current Interests!</text>
         </a>
       </g>
 
@@ -206,11 +203,8 @@ const topics = interestTopics.map((topic, topicIndex) => {
           aria-label={`${topic.label}: ${topic.entries.length} ${topic.entries.length === 1 ? 'branch' : 'branches'}`}
         >
           <title>{`Select ${topic.label} to ${topic.entries.length ? 'show its branches' : 'focus the topic'}`}</title>
-          <rect x="-88" y="-29" width="176" height="58" rx="5" />
-          <text class="node-label" y="-3">{topic.label}</text>
-          <text class="node-meta" y="17">
-            {topic.entries.length} {topic.entries.length === 1 ? 'branch' : 'branches'}
-          </text>
+          <rect x="-99" y="-24" width="198" height="48" rx="5" />
+          <text class="node-label" y="5">{topic.label} ({topic.entries.length})</text>
         </g>
       ))}
 
@@ -227,7 +221,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
           >
             <a href={entry.href} tabindex="-1" aria-label={`Open ${entry.type.toLowerCase()}: ${entry.title}`}>
               <title>{entry.title}</title>
-              <rect x="-88" y="-28" width="176" height="56" rx="5" />
+              <rect x="-95" y="-28" width="190" height="56" rx="5" />
               <text class="node-label" y="-3">{entry.shortTitle}</text>
               <text class="node-meta" y="17">{entry.type}</text>
             </a>
@@ -600,11 +594,11 @@ const topics = interestTopics.map((topic, topicIndex) => {
   }
 
   .map-heading {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 1rem;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 0.9rem 1rem 0.8rem;
+    align-items: center;
+    padding: 0.7rem 0.85rem 0.65rem;
     border-bottom: 1px solid var(--line);
   }
 
@@ -615,9 +609,11 @@ const topics = interestTopics.map((topic, topicIndex) => {
   }
 
   .map-heading p {
-    margin: 0.2rem 0 0;
+    grid-column: 1 / -1;
+    margin: -0.45rem 0 0;
     color: var(--muted);
-    font-size: 0.74rem;
+    font-size: 0.68rem;
+    white-space: nowrap;
   }
 
   .map-actions {
@@ -627,8 +623,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
     white-space: nowrap;
   }
 
-  .map-actions button,
-  .map-actions a {
+  .map-actions button {
     color: var(--muted);
     font: inherit;
     font-size: 0.74rem;
@@ -670,8 +665,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
     display: block;
   }
 
-  .map-actions button:hover,
-  .map-actions a:hover {
+  .map-actions button:hover {
     color: var(--green);
   }
 
@@ -722,7 +716,7 @@ const topics = interestTopics.map((topic, topicIndex) => {
   .graph-node text {
     fill: var(--muted);
     font-family: var(--sans);
-    font-size: 14px;
+    font-size: 15px;
     text-anchor: middle;
     pointer-events: none;
     user-select: none;
@@ -838,11 +832,11 @@ const topics = interestTopics.map((topic, topicIndex) => {
     }
 
     .map-heading {
-      align-items: flex-end;
+      align-items: center;
     }
 
     .map-heading p {
-      max-width: 22ch;
+      font-size: 0.62rem;
     }
   }
 

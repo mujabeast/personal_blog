@@ -1,0 +1,209 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { projects, type Project } from '@/data/projects';
+import { path } from '@/utils/paths';
+
+interface Props {
+  project: Project;
+  detail?: CollectionEntry<'projectDetails'>;
+}
+
+export async function getStaticPaths() {
+  const details = await getCollection('projectDetails');
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: {
+      project,
+      detail: details.find(({ data }) => data.project === project.slug)
+    }
+  }));
+}
+
+const { project, detail } = Astro.props;
+const renderedDetail = detail?.body?.trim() ? await render(detail) : undefined;
+const DetailContent = renderedDetail?.Content;
+---
+
+<BaseLayout title={project.title} description={project.description} type="article">
+  <article class="project-detail">
+    <header class="project-detail-head">
+      <div class="shell">
+        <ol class="crumbs" aria-label="Breadcrumb">
+          <li><a href={path('/')}>Home</a></li>
+          <li><a href={path('/projects/')}>Projects</a></li>
+          <li aria-current="page">{project.title}</li>
+        </ol>
+
+        <div class="project-meta mono">
+          <span>{project.number}</span>
+          <span>{project.status}</span>
+          <span>{project.period}</span>
+        </div>
+
+        <h1>{project.title}</h1>
+        <p class="project-dek">{project.description}</p>
+        <div class="project-tags">{project.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+      </div>
+    </header>
+
+    <div class="project-body shell">
+      <div class="project-main">
+        {DetailContent ? (
+          <div class="prose"><DetailContent /></div>
+        ) : (
+          <section aria-labelledby="public-notes-heading">
+            <h2 id="public-notes-heading">Current public notes</h2>
+            <ul>
+              {project.details.map((detailItem) => <li>{detailItem}</li>)}
+            </ul>
+            <p class="pending-note">A fuller project record can be added here later.</p>
+          </section>
+        )}
+      </div>
+
+      <aside>
+        <p class="mono">Project status</p>
+        <dl>
+          <div><dt>Status</dt><dd>{project.status}</dd></div>
+          <div><dt>Period</dt><dd>{project.period}</dd></div>
+        </dl>
+        <a href={path('/projects/')}>Back to projects</a>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-detail-head {
+    padding: 3.5rem 0 3rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 1.6rem;
+    padding: 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    list-style: none;
+  }
+
+  .crumbs li:not(:last-child)::after {
+    margin-left: 0.4rem;
+    color: var(--line-strong);
+    content: '/';
+  }
+
+  .project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  h1 {
+    max-width: 24ch;
+    margin: 0;
+    font-size: clamp(1.7rem, 3vw, 2.15rem);
+    line-height: 1.2;
+  }
+
+  .project-dek {
+    max-width: 68ch;
+    margin: 1rem 0 0;
+    color: var(--muted);
+    font-family: var(--serif);
+    font-size: 1.02rem;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1.25rem;
+  }
+
+  .project-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    gap: clamp(3rem, 8vw, 7rem);
+    padding-block: 3.5rem 5rem;
+  }
+
+  .project-main {
+    min-width: 0;
+  }
+
+  .project-main > section {
+    max-width: var(--reading);
+  }
+
+  .project-body h2 {
+    margin-top: 0;
+    font-size: 1.25rem;
+  }
+
+  .project-body li {
+    margin-block: 0.55rem;
+  }
+
+  .pending-note {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  aside {
+    align-self: start;
+    padding-left: 1rem;
+    border-left: 1px solid var(--line);
+  }
+
+  aside > p {
+    margin-top: 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  dl {
+    margin: 0 0 1.5rem;
+  }
+
+  dl > div {
+    padding-block: 0.65rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  dt {
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  dd {
+    margin: 0.2rem 0 0;
+    font-size: 0.9rem;
+  }
+
+  aside a {
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 760px) {
+    .project-body {
+      grid-template-columns: 1fr;
+    }
+
+    aside {
+      padding: 1rem 0 0;
+      border-top: 1px solid var(--line);
+      border-left: 0;
+    }
+  }
+</style>

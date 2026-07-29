@@ -14,6 +14,10 @@ export function postPath(id: string): string {
   return path(`blog/${id.replace(/\.(md|mdx)$/, '')}/`);
 }
 
+export function projectPath(slug: string): string {
+  return path(`projects/${slug}/`);
+}
+
 export function absoluteUrl(url = ''): URL {
   return new URL(path(url), import.meta.env.SITE);
 }

@@ -1,41 +1,45 @@
 <button class="theme-toggle" type="button" aria-label="Switch colour theme" title="Switch colour theme">
-  <span class="light-icon" aria-hidden="true">☼</span>
-  <span class="dark-icon" aria-hidden="true">◐</span>
+  <span class="light-icon" aria-hidden="true">Dark</span>
+  <span class="dark-icon" aria-hidden="true">Light</span>
 </button>
 
 <script>
-  const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
 
   function currentTheme() {
     return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
   }
 
   function updateLabel() {
-    button?.setAttribute('aria-label', `Switch to ${currentTheme() === 'dark' ? 'light' : 'dark'} mode`);
+    buttons.forEach((button) => {
+      button.setAttribute('aria-label', `Switch to ${currentTheme() === 'dark' ? 'light' : 'dark'} mode`);
+    });
   }
 
   updateLabel();
-  button?.addEventListener('click', () => {
-    const next = currentTheme() === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    localStorage.setItem('theme', next);
-    updateLabel();
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      updateLabel();
+    });
   });
 </script>
 
 <style>
   .theme-toggle {
-    display: grid;
-    width: 42px;
-    height: 42px;
-    padding: 0;
+    min-height: 36px;
+    padding: 0.35rem 0.65rem;
     border: 1px solid var(--line);
-    place-items: center;
+    color: var(--sidebar-muted);
     background: transparent;
+    font-size: 0.78rem;
   }
 
   .theme-toggle:hover {
-    border-color: var(--accent);
+    border-color: var(--line-strong);
+    color: var(--ink);
   }
 
   .dark-icon,

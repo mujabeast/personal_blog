@@ -71,9 +71,7 @@ const defaultJsonLd = [
     <script is:inline>
       (() => {
         const saved = localStorage.getItem('theme');
-        const theme = saved === 'dark' || saved === 'light'
-          ? saved
-          : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const theme = saved === 'dark' || saved === 'light' ? saved : 'dark';
         document.documentElement.dataset.theme = theme;
       })();
     </script>
@@ -81,9 +79,13 @@ const defaultJsonLd = [
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <Header />
-    <main id="main-content"><slot /></main>
-    <Footer />
+    <div class="site-frame">
+      <Header />
+      <div class="site-column">
+        <main id="main-content"><slot /></main>
+        <Footer />
+      </div>
+    </div>
     <script is:inline define:vars={{ missingImage: path('/images/missing-image.svg') }}>
       document.querySelectorAll('img').forEach((image) => {
         image.addEventListener('error', () => {

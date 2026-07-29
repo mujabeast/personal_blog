@@ -136,7 +136,7 @@ const jsonLd = [
 
 <style>
   .article-head {
-    padding: clamp(3rem, 8vw, 7rem) 0 3rem;
+    padding: 2.75rem 0 2.25rem;
     border-bottom: 1px solid var(--line);
   }
 
@@ -144,22 +144,23 @@ const jsonLd = [
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.2rem;
-    margin-top: 3.5rem;
+    margin-top: 1.75rem;
   }
 
   .article-head h1 {
-    max-width: 18ch;
-    margin: 0.25em 0;
-    font-size: clamp(2.4rem, 6vw, 5rem);
-    letter-spacing: -0.045em;
-    line-height: 1.02;
+    max-width: 38ch;
+    margin: 0.45rem 0;
+    font-size: clamp(1.75rem, 3vw, 2.15rem);
+    font-weight: 600;
+    letter-spacing: -0.018em;
+    line-height: 1.2;
   }
 
   .dek {
     max-width: 760px;
     color: var(--muted);
     font-family: var(--serif);
-    font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+    font-size: 1.05rem;
   }
 
   .updated {
@@ -182,8 +183,8 @@ const jsonLd = [
   .article-grid {
     display: grid;
     grid-template-columns: 210px minmax(0, 1fr);
-    gap: clamp(2rem, 6vw, 5rem);
-    padding-block: clamp(3rem, 7vw, 6rem);
+    gap: 3rem;
+    padding-block: 3rem;
   }
 
   .toc {
@@ -237,7 +238,7 @@ const jsonLd = [
     display: grid;
     width: 60px;
     height: 60px;
-    color: #10201f;
+    color: var(--ink);
     background: var(--signal);
     font-family: var(--mono);
     place-items: center;

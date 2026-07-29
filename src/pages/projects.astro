@@ -7,12 +7,12 @@ import { projects } from '@/data/projects';
 <PageLayout
   title="Projects"
   description="Selected work across OSINT, embedded systems, challenge design and cybersecurity education. Public summaries leave sensitive implementation details out."
-  eyebrow="Build log / selected"
+  eyebrow="Projects"
 >
   <section class="section shell">
     <div class="project-key">
       <p class="mono">Status key</p>
-      <p><span aria-hidden="true"></span> Active work may change. Completed means the described milestone ended—not that every possible improvement is finished.</p>
+      <p>Active work may change. Completed means the described milestone ended—not that every possible improvement is finished.</p>
     </div>
     <ul class="project-list">{projects.map((project) => <ProjectCard {project} />)}</ul>
   </section>

@@ -5,13 +5,13 @@ description: A short introduction to Mujahid Y.I, his current areas of study and
 
 I am **Mujahid Y.I**, an Information Engineering and Media student at Nanyang Technological University. I began learning cybersecurity seriously in June 2025 through Linux and beginner security platforms. Since then, I have explored web and API security, OSINT, practical pentesting, CTF development, computer systems, IoT and hardware security.
 
-I also help lead NTU Sentinels, where I work on technical education, community programmes and CTF development. This site documents what I learn, build and sometimes misunderstand along the way.
+I also help lead NTU Sentinels, where I work on technical education, community programmes and CTF development. This site contains notes from that work and from my own study.
 
 ## Why I write
 
-Writing makes vague understanding harder to hide. It forces me to record assumptions, explain a method in order and return to mistakes that would otherwise be easy to forget.
+I use writing to organise what I have learned and keep a record of the assumptions, methods and mistakes behind each result.
 
-I also want the early stages of learning to remain visible. Many polished technical articles remove the uncertainty that came before the result. My notes aim to preserve enough of that process to be useful to another beginner.
+I keep the earlier stages of the process in my notes where they are useful, including what I tried and what I would change.
 
 ## Current areas of study
 

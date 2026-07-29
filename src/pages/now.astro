@@ -7,7 +7,7 @@ if (!page) throw new Error('Missing src/content/pages/now.md');
 const { Content } = await render(page);
 ---
 
-<PageLayout title={page.data.title} description={page.data.description} eyebrow="Status / manually maintained">
+<PageLayout title={page.data.title} description={page.data.description} eyebrow="Now">
   <section class="now-shell narrow">
     {page.data.lastUpdated && (
       <div class="updated mono">Last updated <time datetime={isoDate(page.data.lastUpdated)}>{formatDate(page.data.lastUpdated)}</time></div>

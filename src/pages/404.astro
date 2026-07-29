@@ -6,8 +6,7 @@ import { path } from '@/utils/paths';
 <BaseLayout title="Page not found" description="The requested page could not be found.">
   <section class="not-found shell">
     <span class="eyebrow">Error / 404</span>
-    <p class="code" aria-hidden="true">0x194</p>
-    <h1>That path leads nowhere.</h1>
+    <h1>Page not found</h1>
     <p>The link may be old, the note may still be a draft, or the address may have been typed incorrectly.</p>
     <div class="button-row">
       <a class="button primary" href={path('/')}>Return home</a>
@@ -20,23 +19,14 @@ import { path } from '@/utils/paths';
   .not-found {
     padding-block: clamp(5rem, 12vw, 10rem);
   }
-  .code {
-    margin: 2rem 0 0;
-    color: var(--accent);
-    font-family: var(--mono);
-    font-size: clamp(4rem, 16vw, 12rem);
-    font-weight: 700;
-    letter-spacing: -0.08em;
-    line-height: 0.8;
-    opacity: 0.22;
-  }
   h1 {
-    margin: -0.35em 0 0.25em;
-    font-size: clamp(2.5rem, 7vw, 6rem);
-    letter-spacing: -0.055em;
-    line-height: 1;
+    margin: 0.5rem 0 0.25rem;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
   }
-  .not-found > p:not(.code) {
+  .not-found > p {
     max-width: 56ch;
     color: var(--muted);
     font-family: var(--serif);

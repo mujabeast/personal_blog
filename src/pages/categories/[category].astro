@@ -15,7 +15,7 @@ const { category, posts } = Astro.props;
 const label = categoryLabels[category as keyof typeof categoryLabels];
 ---
 
-<PageLayout title={label} description={`Writing filed under ${label.toLowerCase()}.`} eyebrow="Archive / category">
+<PageLayout title={label} description={`Writing filed under ${label.toLowerCase()}.`} eyebrow="Category">
   <section class="section shell">
     {posts.length > 0
       ? <ul class="post-list">{posts.map((post, index) => <PostCard {post} {index} />)}</ul>

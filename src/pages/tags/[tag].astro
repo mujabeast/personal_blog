@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 const { tag, posts } = Astro.props;
 ---
 
-<PageLayout title={`#${tag}`} description={`Notes connected to ${tag.replaceAll('-', ' ')}.`} eyebrow="Archive / tag">
+<PageLayout title={`#${tag}`} description={`Notes connected to ${tag.replaceAll('-', ' ')}.`} eyebrow="Tag">
   <section class="section shell">
     <ul class="post-list">{posts.map((post, index) => <PostCard {post} {index} />)}</ul>
   </section>

@@ -1,17 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">MYI — cybersecurity notes and projects</title>
   <desc id="desc">Cybersecurity notes, projects, and learning records.</desc>
-  <defs>
-    <radialGradient id="bg" cx="82%" cy="0%" r="90%">
-      <stop offset="0" stop-color="#18322f"/>
-      <stop offset=".55" stop-color="#101817"/>
-      <stop offset="1" stop-color="#101514"/>
-    </radialGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect x="80" y="75" width="88" height="88" fill="#d9ff57"/>
-  <text x="124" y="132" text-anchor="middle" font-family="monospace" font-size="28" font-weight="700" fill="#10201f">MYI</text>
-  <text x="80" y="342" font-family="system-ui, sans-serif" font-size="70" font-weight="620" fill="#e7ece8">Security notes and projects</text>
-  <text x="84" y="408" font-family="monospace" font-size="24" fill="#56d6cd">SYSTEMS / CTF DEVELOPMENT / HARDWARE</text>
-  <text x="84" y="535" font-family="system-ui, sans-serif" font-size="25" fill="#a9b4b0">Writing, project records, and learning notes.</text>
+  <rect width="1200" height="630" fill="#17181a"/>
+  <rect width="270" height="630" fill="#1e1f21"/>
+  <path d="M270 0V630" stroke="#303236"/>
+  <rect x="58" y="70" width="88" height="88" fill="#27282b" stroke="#45484d"/>
+  <text x="102" y="126" text-anchor="middle" font-family="monospace" font-size="25" font-weight="700" fill="#dedfe1">MYI</text>
+  <text x="58" y="205" font-family="system-ui, sans-serif" font-size="29" font-weight="600" fill="#dedfe1">Mujahid Y.I</text>
+  <text x="58" y="245" font-family="system-ui, sans-serif" font-size="18" fill="#999da3">Security notes and projects</text>
+  <rect x="330" y="104" width="800" height="420" rx="12" fill="#1d1e20" stroke="#303236"/>
+  <text x="380" y="198" font-family="system-ui, sans-serif" font-size="26" font-weight="600" fill="#9a9da2">ABOUT THIS SITE</text>
+  <text x="380" y="282" font-family="system-ui, sans-serif" font-size="48" font-weight="600" fill="#dedfe1">Security notes, project records,</text>
+  <text x="380" y="342" font-family="system-ui, sans-serif" font-size="48" font-weight="600" fill="#dedfe1">and things I am learning.</text>
+  <text x="380" y="427" font-family="system-ui, sans-serif" font-size="23" fill="#9a9da2">Systems / CTF development / IoT / hardware security</text>
 </svg>

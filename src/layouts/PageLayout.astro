@@ -1,7 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 interface Props { title: string; description: string; eyebrow?: string; }
-const { title, description, eyebrow = 'Page' } = Astro.props;
+const { title, description, eyebrow = 'Index' } = Astro.props;
 ---
 
 <BaseLayout {title} {description}>

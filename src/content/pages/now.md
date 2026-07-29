@@ -4,7 +4,7 @@ description: The topics, projects and community work currently receiving my atte
 lastUpdated: 2026-07-29
 ---
 
-This page is a manually maintained snapshot, not an automatically updated claim.
+I update this page manually. The latest update date is shown above.
 
 ## Learning
 

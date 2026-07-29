@@ -7,7 +7,7 @@ const posts = await getPosts();
 const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
 ---
 
-<PageLayout title="Search" description="Search the local, build-time writing index. Nothing is sent to an external service." eyebrow="Archive / search">
+<PageLayout title="Search" description="Search the writing index. Nothing is sent to an external service." eyebrow="Search">
   <section class="section shell">
     <Search {tags} />
     <ul class="post-list" data-filter-list>{posts.map((post, index) => <PostCard {post} {index} />)}</ul>

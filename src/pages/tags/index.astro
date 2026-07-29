@@ -8,7 +8,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))]
   .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 ---
 
-<PageLayout title="Tag index" description="Every subject currently represented in the writing archive." eyebrow="Archive / tags">
+<PageLayout title="Tag index" description="Every subject currently represented in the writing archive." eyebrow="Tags">
   <section class="section shell">
     <div class="tag-cloud">
       {tags.map(({ tag, count }) => <a href={path(`/tags/${tag}/`)}><span>#{tag}</span><small>{count}</small></a>)}

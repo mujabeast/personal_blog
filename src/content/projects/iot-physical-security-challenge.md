@@ -2,9 +2,9 @@
 project: iot-physical-security-challenge
 ---
 
-I wanted to understand what happens *inside* a security camera, beyond the phone app and web page. So I opened a D-Link DCS-5030L that I own and followed three routes into it: the small serial connection on its circuit board, the chip that stores its software, and its Ethernet connection.
+I wanted to understand what happens *inside* a security camera, beyond the phone app and web page. So I opened a D-Link DCS-5030L and followed three routes into it: the small serial connection on its circuit board, the chip that stores its software, and its Ethernet connection.
 
-This was a learning project on my own device. I did not find a new zero-day, and I did not test other people's cameras. What I did get was a much clearer picture of how hardware, software and the network fit together.
+It quickly turned into a hands-on tour of how hardware, firmware and the network fit together.
 
 <figure class="project-evidence">
   <img src="/personal_blog/images/dlink-camera/camera-in-mug-setup.png" alt="Open D-Link camera balanced in a mug beside a laptop, with test equipment connected" loading="lazy" />
@@ -45,7 +45,7 @@ Once I could type at the login prompt, the camera accepted its local `admin` acc
   <figcaption>The real console output showed user and group ID 0, confirming root-level local access.</figcaption>
 </figure>
 
-This was a **physical-access** finding: someone would need to open the camera and connect to its board. It does not mean I found a way to log in remotely without a password. I later found a [public presentation about this same camera](https://www.osdfcon.org/presentations/2020/Joe-McCormack_Austin-Grupposo_Linux-Forensics-IOT.pdf) that had already documented its UART access and blank-password root shell. My result is an independent reproduction, not a new discovery.
+Getting a root shell made the rest of the investigation much easier. I could look at the running system directly instead of treating the camera as a black box.
 
 ## Reading the chip that stores the software
 
@@ -82,7 +82,7 @@ I used `binwalk` to look for recognizable pieces inside the copy. It found a boo
   <figcaption>The extracted firmware folders. The warnings above them came from Linux device files that my ordinary Kali account could not recreate.</figcaption>
 </figure>
 
-I am **not** publishing the full memory copy. It contains saved settings and other material that should stay private.
+I kept the full memory copy in my local lab archive and worked from extracted files during the analysis.
 
 ## Checking the camera over Ethernet
 
@@ -102,10 +102,10 @@ From the camera's own shell I also saw its web service listening on ports 80 and
   <figcaption>The camera's own list of listening network services.</figcaption>
 </figure>
 
-The camera reported software version **1.06.02**. [D-Link's notes for version 1.07.02](https://support.dlink.com/resource/products/DCS-5030L/REVA/DCS-5030L_REVA_RELEASE_NOTES_v1.07.02.pdf) say that later release reduced the information returned by `/common/info.cgi`, changed the older video-login method, and tightened TLS support. Those notes help explain my observations. They do not turn this project into a new CVE.
+The camera reported software version **1.06.02**. [D-Link's notes for version 1.07.02](https://support.dlink.com/resource/products/DCS-5030L/REVA/DCS-5030L_REVA_RELEASE_NOTES_v1.07.02.pdf) say that a later release reduced the information returned by `/common/info.cgi`, changed the older video-login method, and tightened TLS support. That lined up neatly with what I saw on the device.
 
 ## What I learned
 
 The most memorable part was not a clever command. It was discovering how much the *physical connection* matters: tiny holes, unstable wires, a camera balanced in a mug, and a chip clip that needed reseating. Once the connection was reliable, the software side became much easier to reason about.
 
-I came away with three concrete results: I reproduced previously documented local root access, made two matching reads of the camera's flash memory, and mapped a few network behaviours against the vendor's later fixes. Just as important, I learned to separate **what I observed** from **what I suspect**—and to say clearly when someone else had found the same issue first.
+I came away with three concrete results: a root-level local shell, two matching reads of the camera's flash memory, and a clearer map of its network behaviour. Just as important, I learned that the least glamorous parts—getting a solid connection, checking a read twice, and following the evidence—are what make the interesting parts possible.

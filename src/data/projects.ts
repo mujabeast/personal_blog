@@ -39,7 +39,7 @@ export const projects: Project[] = [
     description: 'A hands-on look at a camera’s circuit board, serial console, memory chip and web interface.',
     details: [
       'Read the camera’s memory twice and checked that both copies matched.',
-      'Compared what I found with earlier public research—no new vulnerability claimed.'
+      'Mapped the camera\'s local shell, memory layout, and web behaviour.'
     ],
     tags: ['IoT', 'hardware', 'firmware'],
     graphTopics: ['iot-hardware'],

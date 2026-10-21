@@ -7,7 +7,7 @@ export interface Project {
   slug: string;
   title: string;
   status: ProjectStatus;
-  period: string;
+  period?: string;
   description: string;
   details: string[];
   tags: string[];
@@ -34,15 +34,14 @@ export const projects: Project[] = [
   {
     number: 'P-02',
     slug: 'iot-physical-security-challenge',
-    title: 'IoT & physical security challenge development',
-    status: 'Active',
-    period: '2026',
-    description: 'Exploring a PTZ CCTV-based challenge and the interaction between device control, APIs and physical systems.',
+    title: 'Inside a D-Link Security Camera',
+    status: 'Completed',
+    description: 'A hands-on look at a camera’s circuit board, serial console, memory chip and web interface.',
     details: [
-      'Uses isolated environments and avoids publishing device credentials or private network details.',
-      'A practical lesson in designing for safety, repeatability and hardware reliability.'
+      'Read the camera’s memory twice and checked that both copies matched.',
+      'Compared what I found with earlier public research—no new vulnerability claimed.'
     ],
-    tags: ['IoT', 'APIs', 'physical security'],
+    tags: ['IoT', 'hardware', 'firmware'],
     graphTopics: ['iot-hardware'],
     featured: true
   },

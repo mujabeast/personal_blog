@@ -38,7 +38,7 @@ const DetailContent = renderedDetail?.Content;
         <div class="project-meta mono">
           <span>{project.number}</span>
           <span>{project.status}</span>
-          <span>{project.period}</span>
+          {project.period && <span>{project.period}</span>}
         </div>
 
         <h1>{project.title}</h1>
@@ -66,7 +66,7 @@ const DetailContent = renderedDetail?.Content;
         <p class="mono">Project status</p>
         <dl>
           <div><dt>Status</dt><dd>{project.status}</dd></div>
-          <div><dt>Period</dt><dd>{project.period}</dd></div>
+          {project.period && <div><dt>Period</dt><dd>{project.period}</dd></div>}
         </dl>
         <a href={path('/projects/')}>Back to projects</a>
       </aside>

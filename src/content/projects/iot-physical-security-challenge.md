@@ -2,20 +2,20 @@
 project: iot-physical-security-challenge
 ---
 
-I’m an electrical and electronics engineering undergrad. I chose my degree before I got interested in cybersecurity, and for a while I treated some of my non-cyber modules like a detour. Then I started wondering how I could connect digital electronics and analog electronics to security work. IoT security kept coming up, so I decided to try it for myself. I think I’m hooked.
+Motivations: I am currently an undergrad in an electrical and electronics engineering school (i chose my degree before my interest in cyber began). I realised that instead of looking at my non cyber related modules as a hindrance in my cybersec journey, i realised that if i just somehow try to relate or apply what i learnt into cyber, it won't be a waste of my time! So I did some research on how i can apply IE2104 (digital electronics) and IM1002(Analog electronics) into cyber and IoT security kept popping up. So I decided to give this a try and I think I'm hooked lol.
 
-After reading about IoT security and watching hours of YouTube videos, I wanted to stop just watching and start poking around myself. I didn’t want to pick a device because someone had already posted a vulnerability or follow a tutorial step by step. I wanted to buy something cheap and figure out what I could learn from it, so I found a used camera on Carousell for S$10 and ordered a few hardware tools from Shopee.
+After doing a deep dive into IoT sec, reading resources online, watching HOURS of youtube videos, i decided the best way to do ts was to actually try it out myself. I also knew I didnt want to just buy a known vulnerable device, and just follow some youtube tutorial. I wanted to experience poking around, figuring things out myself. So I just bought a random camera on carousell for $10 along with a few other hardware hacking tools from shoppee.
 
 <figure class="project-evidence">
   <img src="/personal_blog/images/dlink-camera/carousell-listing.jpg" alt="Original Carousell listing for the used D-Link camera and its accessories, priced at S$10" loading="lazy" />
   <figcaption>The listing that started it: a used camera and its accessories for S$10.</figcaption>
 </figure>
 
-I still wanted a general method to follow, so I used the [Embedded Device Hacking guide](https://www.iotpentestingguide.com/chapter1.html) as a loose map. It suggests starting with research and a visual inspection, then opening the device, finding its interfaces, and looking at its firmware. That gave me a direction while leaving room to work things out as I went.
+Also ik i said i didnt wanna follow a guide, but i still wanted to follow the general methodology behind IoT hacking so i used this [guide](https://www.iotpentestingguide.com/chapter1.html) as a loose map.
 
 ## Starting with OSINT and a screwdriver
 
-After inspecting the camera, I identified it as a D-Link DCS-5030L. Before opening it, I looked up the model number and FCC ID. The regulatory listings had internal photos, so I could see the main board, image-sensor board, Wi-Fi antenna connection, Ethernet hardware, and flash chip before I had removed a screw.
+After inspecting the device, it was a D-Link DCS-5030L camera. Before opening anything, I looked up the model number and FCC ID. Regulatory listings turned out to be useful because they included internal photos of the camera, not just product shots. I could see the main board, the image-sensor board, the Wi-Fi antenna connection, the Ethernet hardware, and the flash chip before I had even removed a screw.
 
 The screws were hiding under the rubber pads on the base. Once the pads came off, the housing opened and the green main board was finally visible. The camera had more than one board because the image sensor and moving camera assembly need their own compact board, while the larger board handles the processor, Wi-Fi, Ethernet, storage, power, speaker, and the exposed debug connections.
 
@@ -29,9 +29,9 @@ Even though the header was labelled, I still checked the ground pin with my mult
 
 The black and red probes are just the meter's reference points. In continuity mode, they are not supplying power; the meter sends a tiny test signal and beeps when it sees a very low-resistance path. Finding ground matters because the USB serial adapter and camera need the same electrical reference before they can understand each other's signals.
 
-**Problem #1:** The holes were too small for my normal jumper pins, and I only had two test probes but needed three connections. For the last one, I cut the metal pin off a jumper wire, exposed the conductor, and held it in place with Blu Tack. Genius idea at first; loose contacts became one of my biggest troubleshooting problems later.
+Problem#1: The holes were too small for my normal jumper pins. I only had two test probes, but needed three connections. For the last one, I cut the metal pin from a jumper wire, exposed the conductor, and held it in place with Blu Tack (#genius). Regret doing this in the end cos loose contacts became one of my biggest trouble shooting problems lel.
 
-**Problem #2:** I couldn’t remove the main board fully because it was held in by hot glue. I had to wire it up while it was still sitting in the camera enclosure, and I didn’t have helping-hand tools. So I put the whole thing in a mug to keep it steady. Somehow, that worked.
+Problem #2 IDKY but the main board could not be removed from the enclosure fully, cos of some hot glue. So i had to do all the wiring with the enclosure, and i didnt have those helping hand tools. So my 2nd genius idea was to put the whole thing inside a mug and it worked muahaha.
 
 <figure class="project-evidence">
   <img src="/personal_blog/images/dlink-camera/uart-wires-on-board.png" alt="Test probes and wires attached to the opened camera's circuit board" loading="lazy" />
@@ -200,7 +200,5 @@ tcp  0  0  0.0.0.0:443  0.0.0.0:*  LISTEN  240/alphapd
 The camera reported software version **1.06.02**. [D-Link's notes for version 1.07.02](https://support.dlink.com/resource/products/DCS-5030L/REVA/DCS-5030L_REVA_RELEASE_NOTES_v1.07.02.pdf) say that a later release reduced the information returned by `/common/info.cgi`, changed the older video-login method, and tightened TLS support. That lined up neatly with what I saw on the device.
 
 ## What I learned
-
-The most memorable part was not a clever command. It was discovering how much the *physical connection* matters: tiny holes, unstable wires, a camera balanced in a mug, and a chip clip that needed reseating. Once the connection was reliable, the software side became much easier to reason about.
 
 IoT hacking is damn fun, but ragebait at times. There are so many variables and things to trouble shoot when it comes to anything hardware related. Sometimes you just have to run stuff twice also. I think i will try a router next ...

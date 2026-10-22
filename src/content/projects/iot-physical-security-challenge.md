@@ -2,33 +2,26 @@
 project: iot-physical-security-challenge
 ---
 
-I bought a D-Link DCS-5030L camera from Carousell for $10 because I wanted to get my hands dirty with IoT hacking. I had no fancy lab and no real hardware-reversing experience—just a cheap camera, a multimeter, a USB serial adapter, a CH341A flash reader, and a lot of trial and error.
+I’m an electrical and electronics engineering undergrad. I chose my degree before I got interested in cybersecurity, and for a while I treated some of my non-cyber modules like a detour. Then I started wondering how I could connect digital electronics and analog electronics to security work. IoT security kept coming up, so I decided to try it for myself. I think I’m hooked.
+
+After reading about IoT security and watching hours of YouTube videos, I wanted to stop just watching and start poking around myself. I didn’t want to pick a device because someone had already posted a vulnerability or follow a tutorial step by step. I wanted to buy something cheap and figure out what I could learn from it, so I found a used camera on Carousell for S$10 and ordered a few hardware tools from Shopee.
 
 <figure class="project-evidence">
   <img src="/personal_blog/images/dlink-camera/carousell-listing.jpg" alt="Original Carousell listing for the used D-Link camera and its accessories, priced at S$10" loading="lazy" />
   <figcaption>The listing that started it: a used camera and its accessories for S$10.</figcaption>
 </figure>
 
-I did not start by hunting for a camera with a known issue attached to it. I wanted to buy something cheap, take it apart, and see where my own testing would lead.
-
-I used the [Embedded Device Hacking guide](https://www.iotpentestingguide.com/chapter1.html) as a loose map. Its first chapter starts with the sensible stuff: inspect the device, look up its identifiers, open it up, identify exposed interfaces, then inspect the software stored on the flash chip. That gave me a route through a device that initially just looked like a plastic camera shell.
-
-By the end, I had followed three routes into it: the small serial connection on its circuit board, the chip that stores its software, and its Ethernet connection.
-
-<figure class="project-evidence">
-  <img src="/personal_blog/images/dlink-camera/camera-in-mug-setup.png" alt="Open D-Link camera balanced in a mug beside a laptop, with test equipment connected" loading="lazy" />
-  <figcaption>My substitute for a helping-hands stand: a mug. It kept the camera steady while I worked.</figcaption>
-</figure>
+I still wanted a general method to follow, so I used the [Embedded Device Hacking guide](https://www.iotpentestingguide.com/chapter1.html) as a loose map. It suggests starting with research and a visual inspection, then opening the device, finding its interfaces, and looking at its firmware. That gave me a direction while leaving room to work things out as I went.
 
 ## Starting with OSINT and a screwdriver
 
-Before opening anything, I looked up the model number and FCC ID. Regulatory listings turned out to be useful because they included internal photos of the camera, not just product shots. I could see the main board, the image-sensor board, the Wi-Fi antenna connection, the Ethernet hardware, and the flash chip before I had even removed a screw.
+After inspecting the camera, I identified it as a D-Link DCS-5030L. Before opening it, I looked up the model number and FCC ID. The regulatory listings had internal photos, so I could see the main board, image-sensor board, Wi-Fi antenna connection, Ethernet hardware, and flash chip before I had removed a screw.
 
 The screws were hiding under the rubber pads on the base. Once the pads came off, the housing opened and the green main board was finally visible. The camera had more than one board because the image sensor and moving camera assembly need their own compact board, while the larger board handles the processor, Wi-Fi, Ethernet, storage, power, speaker, and the exposed debug connections.
 
 The first things I looked for were chip markings, connectors, and labels printed directly on the board. The guide had told me to look for UART, flash, JTAG, SD-card slots, USB, and Ethernet. In this camera, the UART header was literally labelled, which saved me from guessing where it was.
 
-## Finding the UART pins
+## UART
 
 Inside the camera I found four holes labelled `G`, `R`, `T` and `V`. They are for **UART**, a simple serial connection that lets the camera send boot messages and accept typed commands. `G` is ground, `T` sends data from the camera, and `R` receives data. I left `V` alone because the camera already had its own power supply.
 
@@ -36,16 +29,18 @@ Even though the header was labelled, I still checked the ground pin with my mult
 
 The black and red probes are just the meter's reference points. In continuity mode, they are not supplying power; the meter sends a tiny test signal and beeps when it sees a very low-resistance path. Finding ground matters because the USB serial adapter and camera need the same electrical reference before they can understand each other's signals.
 
-The holes were too small for my normal jumper pins. I only had two test probes, but needed three connections. For the last one, I removed the metal pin from a jumper wire, exposed the conductor, and held it in place with Blu Tack. It was not a proper long-term connection. In fact, loose contacts became one of my biggest troubleshooting problems. I checked the wiring carefully so neighbouring points would not touch.
+**Problem #1:** The holes were too small for my normal jumper pins, and I only had two test probes but needed three connections. For the last one, I cut the metal pin off a jumper wire, exposed the conductor, and held it in place with Blu Tack. Genius idea at first; loose contacts became one of my biggest troubleshooting problems later.
 
-<figure class="project-evidence">
-  <img src="/personal_blog/images/dlink-camera/improvised-uart-wire.png" alt="A thin jumper wire with its metal pin removed and conductor exposed" loading="lazy" />
-  <figcaption>The improvised third connection: a bare conductor after removing the jumper pin.</figcaption>
-</figure>
+**Problem #2:** I couldn’t remove the main board fully because it was held in by hot glue. I had to wire it up while it was still sitting in the camera enclosure, and I didn’t have helping-hand tools. So I put the whole thing in a mug to keep it steady. Somehow, that worked.
 
 <figure class="project-evidence">
   <img src="/personal_blog/images/dlink-camera/uart-wires-on-board.png" alt="Test probes and wires attached to the opened camera's circuit board" loading="lazy" />
   <figcaption>Probes and the improvised wire on the camera board. The Blu Tack helped keep a fragile contact in place.</figcaption>
+</figure>
+
+<figure class="project-evidence">
+  <img src="/personal_blog/images/dlink-camera/camera-in-mug-setup.png" alt="Open D-Link camera balanced in a mug beside a laptop, with test equipment connected" loading="lazy" />
+  <figcaption>No helping hands, so the mug became my camera stand.</figcaption>
 </figure>
 
 I used a USB serial adapter and Kali Linux to read the connection at **57,600 baud**—the speed at which the camera sends its serial messages. At first the screen was blank. The adapter changed from `/dev/ttyUSB0` to `/dev/ttyUSB1` after I reconnected it, and I also had to sort out loose contacts and an old `minicom` session still holding the port. Once the wires stayed put and I restarted the camera, the boot messages appeared.
@@ -136,7 +131,23 @@ It found a U-Boot bootloader, a Linux kernel image for a MIPS processor, and LZM
 0x50040  LZMA compressed data
 ```
 
-I used a short Python script to copy the relevant byte range from the dump and decompress the LZMA data. I did not need to understand the camera's compiled code for this part; the script was doing file handling: open the dump, start at the offset Binwalk found, save that section, and unpack it.
+This was the point where I started using Python. Binwalk gave me the byte offset where the compressed data began. My script opened the dump, sliced out the LZMA section, decompressed it, and saved the result so I could inspect it. The core idea looked like this:
+
+```python
+from pathlib import Path
+import lzma
+
+dump = Path("dlink-dump1.bin").read_bytes()
+offset = 0x50040  # LZMA data offset reported by Binwalk
+compressed_size = 7_734_984  # image size from the uImage header
+compressed = dump[offset:offset + compressed_size]
+
+kernel = lzma.decompress(compressed, format=lzma.FORMAT_ALONE)
+Path("kernel-decompressed.bin").write_bytes(kernel)
+print(f"Decompressed {len(kernel):,} bytes")
+```
+
+The part that took me a moment to understand was the offset: it is just the number of bytes to skip from the start of the dump before the compressed section begins. The script turns that section into a file I could keep examining with other tools.
 
 The decompressed kernel still contained another layer. I initially went looking for SquashFS because that is common in embedded devices, but `file` and `binwalk` pointed elsewhere. The filesystem turned out to be a CPIO archive, so I extracted it with:
 
@@ -192,4 +203,4 @@ The camera reported software version **1.06.02**. [D-Link's notes for version 1.
 
 The most memorable part was not a clever command. It was discovering how much the *physical connection* matters: tiny holes, unstable wires, a camera balanced in a mug, and a chip clip that needed reseating. Once the connection was reliable, the software side became much easier to reason about.
 
-I came away with three concrete results: a root-level local shell, two matching reads of the camera's flash memory, and a clearer map of its network behaviour. Just as important, I learned that the least glamorous parts—getting a solid connection, checking a read twice, and following the evidence—are what make the interesting parts possible.
+IoT hacking is damn fun, but ragebait at times. There are so many variables and things to trouble shoot when it comes to anything hardware related. Sometimes you just have to run stuff twice also. I think i will try a router next ...

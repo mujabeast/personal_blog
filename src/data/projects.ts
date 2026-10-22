@@ -34,9 +34,9 @@ export const projects: Project[] = [
   {
     number: 'P-02',
     slug: 'iot-physical-security-challenge',
-    title: 'Inside a D-Link Security Camera',
+    title: 'IoT Hacking (Security Camera)',
     status: 'Completed',
-    description: 'A hands-on look at a camera’s circuit board, serial console, memory chip and web interface.',
+    description: 'My first hands-on IoT hacking project: taking apart a S$10 used camera and exploring its UART, firmware and network.',
     details: [
       'Read the camera’s memory twice and checked that both copies matched.',
       'Mapped the camera\'s local shell, memory layout, and web behaviour.'
